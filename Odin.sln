@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odin.Api", "Odin.Api\Odin.Api.csproj", "{B21195DB-2871-4FF4-9127-A470E77BB2FD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Odin.Hardware", "Odin.Hardware", "{4B6E766B-BFF5-43D3-AA8C-FFA19EEEB7A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArduinoTMP36ButtonSerial", "Odin.Hardware\ArduinoTMP36ButtonSerial\ArduinoTMP36ButtonSerial.csproj", "{15CA820D-83A8-4F21-BEAA-F0A8081129A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,12 @@ Global
 		{B21195DB-2871-4FF4-9127-A470E77BB2FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B21195DB-2871-4FF4-9127-A470E77BB2FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B21195DB-2871-4FF4-9127-A470E77BB2FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15CA820D-83A8-4F21-BEAA-F0A8081129A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15CA820D-83A8-4F21-BEAA-F0A8081129A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15CA820D-83A8-4F21-BEAA-F0A8081129A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15CA820D-83A8-4F21-BEAA-F0A8081129A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{15CA820D-83A8-4F21-BEAA-F0A8081129A7} = {4B6E766B-BFF5-43D3-AA8C-FFA19EEEB7A8}
 	EndGlobalSection
 EndGlobal
