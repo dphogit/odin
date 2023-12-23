@@ -16,3 +16,10 @@ public record CreateDeviceDTO
     public string? Description { get; init; } = null;
     public string? Location { get; init; } = null;
 }
+
+public record UpdateDeviceDTO
+{
+    public string? Name { get; init; } = null;
+    public string? Description { get; init; } = null;
+    public string? Location { get; init; } = null;
+}
