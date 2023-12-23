@@ -1,0 +1,12 @@
+{
+    "mssql.connections": [
+        {
+            "server": "localhost,1433",
+            "database": "odin",
+            "authenticationType": "SqlLogin",
+            "user": "SA",
+            "password": "",
+            "trustServerCertificate": true
+        }
+    ]
+}

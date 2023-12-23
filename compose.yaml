@@ -1,0 +1,16 @@
+services:
+    api_db:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        container_name: sql1
+        user: root
+        environment:
+            MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+            ACCEPT_EULA: "Y"
+        ports:
+            - 1433:1433
+        volumes:
+            - sql1_data:/var/opt/mssql/data
+        restart: always
+
+volumes:
+    sql1_data:
