@@ -35,3 +35,5 @@ app.MapGet("/", () => "Hello World!");
 app.MapGroup("/devices").MapDeviceEndpoints();
 
 app.Run();
+
+public partial class Program { }
