@@ -1,39 +1,64 @@
-using FluentAssertions;
-using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Odin.Api.Database;
+using Respawn;
 using Testcontainers.MsSql;
 using Xunit;
 
 namespace Odin.Api.IntegrationTests;
 
-public sealed class MsSqlTests : IAsyncLifetime
+public sealed class MsSqlTests : WebApplicationFactory<Program>, IAsyncLifetime
 {
     // Image should be consistent with docker-compose.yml
     private readonly MsSqlContainer msSqlContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
         .Build();
 
+    private Respawner respawner = default!;
+
     public string ConnectionString => msSqlContainer.GetConnectionString();
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
-        return msSqlContainer.StartAsync();
+        await msSqlContainer.StartAsync();
+        using var scope = Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await dbContext.Database.MigrateAsync();
+
+        respawner = await Respawner.CreateAsync(ConnectionString, new RespawnerOptions
+        {
+            TablesToIgnore = ["__EFMigrationsHistory"]
+        });
     }
 
-    public Task DisposeAsync()
+    public new async Task DisposeAsync()
     {
-        return msSqlContainer.DisposeAsync().AsTask();
+        await msSqlContainer.DisposeAsync();
     }
 
-    [Fact]
-    public async Task HelloMsSql()
+    public async Task ResetDatabase()
     {
-        await using var connection = new SqlConnection(ConnectionString);
-        await connection.OpenAsync();
+        await respawner.ResetAsync(ConnectionString);
+    }
 
-        await using var command = connection.CreateCommand();
-        command.CommandText = "SELECT 1";
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureServices(services =>
+        {
+            var dbContextDescriptor = services.SingleOrDefault(
+                s => s.ServiceType == typeof(DbContextOptions<AppDbContext>));
 
-        var result = await command.ExecuteScalarAsync() as int?;
-        result.GetValueOrDefault().Should().Be(1);
+            if (dbContextDescriptor != null)
+            {
+                services.Remove(dbContextDescriptor);
+            }
+
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseSqlServer(ConnectionString);
+            });
+        });
     }
 }
