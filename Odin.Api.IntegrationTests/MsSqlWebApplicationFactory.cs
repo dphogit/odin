@@ -6,7 +6,7 @@ using Odin.Api.Database;
 
 namespace Odin.Api.IntegrationTests;
 
-public sealed class MsSqlWebApplicationFactory(MsSqlTests fixture) : WebApplicationFactory<Program>
+public sealed class MsSqlWebApplicationFactory(string connectionString) : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -22,8 +22,13 @@ public sealed class MsSqlWebApplicationFactory(MsSqlTests fixture) : WebApplicat
 
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlServer(fixture.ConnectionString);
+                options.UseSqlServer(connectionString);
             });
+
+            // Apply migrations
+            using var scope = services.BuildServiceProvider().CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            dbContext.Database.Migrate();
         });
     }
 }
