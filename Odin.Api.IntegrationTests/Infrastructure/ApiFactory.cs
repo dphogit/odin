@@ -58,6 +58,20 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await _msSqlContainer.DisposeAsync();
     }
 
+    public async Task SeedDatabaseAsync(Action<AppDbContext> seedAction)
+    {
+        // TODO Generalize this method to work with any tables.
+        using var scope = Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        using var transaction = await dbContext.Database.BeginTransactionAsync();
+        dbContext.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT dbo.Devices ON");
+        seedAction(dbContext);
+        await dbContext.SaveChangesAsync();
+        dbContext.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT dbo.Devices OFF");
+        await transaction.CommitAsync();
+    }
+
     public async Task ResetDatabaseAsync()
     {
         await _respawner.ResetAsync(_dbConnection);

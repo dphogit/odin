@@ -1,9 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Odin.Api.Database;
 using Odin.Api.DTOs;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
@@ -20,20 +17,13 @@ public class GetAllDevicesTests(ApiFactory factory) : IAsyncLifetime
     public async Task InitializeAsync()
     {
         // Arrange
-        using var scope = factory.Services.CreateScope();
-        var provider = scope.ServiceProvider;
-
-        using var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        using var transaction = await dbContext.Database.BeginTransactionAsync();
-        dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Devices ON");
-        await dbContext.Devices.AddRangeAsync(
-            new Device() { Id = 1, Name = "Device 1", Description = "Description 1", Location = "Location 1" },
-            new Device() { Id = 2, Name = "Device 2", Description = "Description 2", Location = "Location 2" }
-        );
-        await dbContext.SaveChangesAsync();
-        dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Devices OFF");
-        await transaction.CommitAsync();
+        await factory.SeedDatabaseAsync(dbContext =>
+        {
+            dbContext.Devices.AddRange(
+                new Device() { Id = 1, Name = "Device 1", Description = "Description 1", Location = "Location 1" },
+                new Device() { Id = 2, Name = "Device 2", Description = "Description 2", Location = "Location 2" }
+            );
+        });
     }
 
     public Task DisposeAsync() => _resetDatabase();
