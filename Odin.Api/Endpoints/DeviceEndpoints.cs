@@ -49,12 +49,15 @@ public static class DeviceEndpoints
         );
     }
 
-    public static async Task<NoContent> UpdateDevice(IDeviceService deviceService, int id, UpdateDeviceDTO updateDTO)
+    public static async Task<Results<NotFound, NoContent>> UpdateDevice(
+        IDeviceService deviceService,
+        int id,
+        UpdateDeviceDTO updateDTO)
     {
         var device = await deviceService.GetDeviceByIdAsync(id);
 
         if (device is null)
-            return TypedResults.NoContent();
+            return TypedResults.NotFound();
 
         device.Location = updateDTO.Location ?? device.Location;
         device.Name = updateDTO.Name ?? device.Name;
@@ -65,12 +68,12 @@ public static class DeviceEndpoints
         return TypedResults.NoContent();
     }
 
-    public static async Task<NoContent> DeleteDevice(IDeviceService deviceService, int id)
+    public static async Task<Results<NotFound, NoContent>> DeleteDevice(IDeviceService deviceService, int id)
     {
         var device = await deviceService.GetDeviceByIdAsync(id);
 
         if (device is null)
-            return TypedResults.NoContent();
+            return TypedResults.NotFound();
 
         await deviceService.DeleteDeviceAsync(device);
 
