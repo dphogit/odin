@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Odin.Api.Database;
 using Odin.Api.DTOs;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
@@ -14,30 +16,35 @@ public class GetDeviceTests(ApiFactory factory) : IAsyncLifetime
     private readonly HttpClient _httpClient = factory.HttpClient;
     private readonly Func<Task> _resetDatabase = factory.ResetDatabaseAsync;
 
-    public async Task InitializeAsync()
-    {
-        // Arrange
-        await factory.SeedDatabaseAsync(dbContext =>
-        {
-            dbContext.Devices.AddRange(
-                new Device() { Id = 1, Name = "Device 1", Description = "Description 1", Location = "Location 1" }
-            );
-        });
-    }
+    public Task InitializeAsync() => Task.CompletedTask;
 
     public Task DisposeAsync() => _resetDatabase();
 
     [Fact]
     public async Task GetById_PopulatedDb_ReturnsDeviceAndOk()
     {
+        // Arrange
+        var device = new Device() { Name = "Device 1", Description = "Description 1", Location = "Location 1" };
+        await factory.InsertAsync(device);
+
+        using var scope = factory.ScopeFactory.CreateScope();
+        var id = scope.ServiceProvider.GetRequiredService<AppDbContext>().Devices.Single().Id;
+
         // Act
-        var response = await _httpClient.GetAsync("devices/1");
-        var deviceDTO = await response.Content.ReadFromJsonAsync<DeviceDTO>();
+        var response = await _httpClient.GetAsync($"devices/{id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var deviceDTO = await response.Content.ReadFromJsonAsync<DeviceDTO>();
         deviceDTO.Should().BeOfType<DeviceDTO>().Which.Should().BeEquivalentTo(
-            new DeviceDTO() { Id = 1, Name = "Device 1", Description = "Description 1", Location = "Location 1" },
+            new DeviceDTO()
+            {
+                Id = id,
+                Name = "Device 1",
+                Description = "Description 1",
+                Location = "Location 1"
+            },
             (options) => options.Excluding(dto => dto.CreatedAt).Excluding(dto => dto.UpdatedAt)
         );
     }
@@ -45,8 +52,11 @@ public class GetDeviceTests(ApiFactory factory) : IAsyncLifetime
     [Fact]
     public async Task GetById_NonExistentId_ReturnsNotFound()
     {
+        // Arrange
+        int id = 1;
+
         // Act
-        var response = await _httpClient.GetAsync("devices/2");
+        var response = await _httpClient.GetAsync($"devices/{id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

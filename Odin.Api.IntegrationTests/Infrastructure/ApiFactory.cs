@@ -22,10 +22,10 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
         .Build();
 
+    public IServiceScopeFactory ScopeFactory { get; private set; } = default!;
     public HttpClient HttpClient { get; private set; } = default!;
 
     public string ConnectionString => _msSqlContainer.GetConnectionString();
-    public string ContainerId => _msSqlContainer.Id;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -50,6 +50,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         await _msSqlContainer.StartAsync();
         HttpClient = CreateClient();
+        ScopeFactory = Services.GetRequiredService<IServiceScopeFactory>();
         await InitializeDbRespawner();
     }
 
@@ -58,23 +59,22 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await _msSqlContainer.DisposeAsync();
     }
 
-    public async Task SeedDatabaseAsync(Action<AppDbContext> seedAction)
-    {
-        // TODO Generalize this method to work with any tables.
-        using var scope = Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        using var transaction = await dbContext.Database.BeginTransactionAsync();
-        dbContext.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT dbo.Devices ON");
-        seedAction(dbContext);
-        await dbContext.SaveChangesAsync();
-        dbContext.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT dbo.Devices OFF");
-        await transaction.CommitAsync();
-    }
-
     public async Task ResetDatabaseAsync()
     {
         await _respawner.ResetAsync(_dbConnection);
+    }
+
+    public async Task ExecuteDbContextAsync(Action<AppDbContext> seedAction)
+    {
+        using var scope = ScopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        seedAction(dbContext);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task InsertAsync<TEntity>(params TEntity[] entities) where TEntity : class
+    {
+        await ExecuteDbContextAsync(async dbContext => await dbContext.AddRangeAsync(entities));
     }
 
     private async Task InitializeDbRespawner()

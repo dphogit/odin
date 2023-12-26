@@ -16,15 +16,7 @@ public class UpdateDeviceTests(ApiFactory factory) : IAsyncLifetime
     private readonly HttpClient _httpClient = factory.HttpClient;
     private readonly Func<Task> _resetDatabase = factory.ResetDatabaseAsync;
 
-    public async Task InitializeAsync()
-    {
-        await factory.SeedDatabaseAsync(dbContext =>
-        {
-            dbContext.Devices.AddRange(
-                new Device() { Id = 1, Name = "Device 1", Description = "Description 1", Location = "Location 1" }
-            );
-        });
-    }
+    public Task InitializeAsync() => Task.CompletedTask;
 
     public Task DisposeAsync() => _resetDatabase();
 
@@ -32,6 +24,12 @@ public class UpdateDeviceTests(ApiFactory factory) : IAsyncLifetime
     public async Task Update_DeviceInDb_ReturnsNoContentAndUpdatesDevice()
     {
         // Arrange
+        var device = new Device() { Name = "Device 1", Description = "Description 1", Location = "Location 1" };
+        await factory.InsertAsync(device);
+
+        using var createScope = factory.ScopeFactory.CreateScope();
+        var id = createScope.ServiceProvider.GetRequiredService<AppDbContext>().Devices.Single().Id;
+
         UpdateDeviceDTO updateDeviceDTO = new()
         {
             Name = "Device 1 Updated",
@@ -40,23 +38,22 @@ public class UpdateDeviceTests(ApiFactory factory) : IAsyncLifetime
         };
 
         // Act
-        var response = await _httpClient.PutAsJsonAsync("devices/1", updateDeviceDTO);
+        var response = await _httpClient.PutAsJsonAsync($"devices/{id}", updateDeviceDTO);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        using var scope = factory.Services.CreateScope();
-        var provider = scope.ServiceProvider;
-
-        using var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var device = await dbContext.Devices.FindAsync(1);
-        device.Should().BeEquivalentTo(updateDeviceDTO);
+        using var verifyScope = factory.Services.CreateScope();
+        var verifiedDevice = await verifyScope.ServiceProvider.GetRequiredService<AppDbContext>().Devices.FindAsync(id);
+        verifiedDevice.Should().BeEquivalentTo(updateDeviceDTO);
     }
 
     [Fact]
     public async Task Update_NoExistingId_ReturnsNotFound()
     {
         // Arrange
+        int id = 1;
+
         UpdateDeviceDTO updateDeviceDTO = new()
         {
             Name = "Device 1 Updated",
@@ -65,7 +62,7 @@ public class UpdateDeviceTests(ApiFactory factory) : IAsyncLifetime
         };
 
         // Act
-        var response = await _httpClient.PutAsJsonAsync("devices/3", updateDeviceDTO);
+        var response = await _httpClient.PutAsJsonAsync($"devices/{id}", updateDeviceDTO);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
