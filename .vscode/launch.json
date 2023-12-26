@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ArduinoTMP36ButtonSerial",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build ArduinoTMP36ButtonSerial",
+            "program": "${workspaceFolder}/Odin.Hardware/ArduinoTMP36ButtonSerial/bin/Debug/net8.0/ArduinoTMP36ButtonSerial.dll",
+            "args": ["${input:port}"],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "port",
+            "type": "promptString",
+            "description": "The serial port to listen on e.g. COM3"
+        }
+    ]
+}
