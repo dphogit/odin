@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArduinoTMP36ButtonSerial", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odin.Api.IntegrationTests", "Odin.Api.IntegrationTests\Odin.Api.IntegrationTests.csproj", "{7C70F48B-241D-4276-A3C3-5BA16C63B6A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odin.Shared", "Odin.Shared\Odin.Shared.csproj", "{3FB7D999-5632-487C-A60A-A86943A16C95}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{7C70F48B-241D-4276-A3C3-5BA16C63B6A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C70F48B-241D-4276-A3C3-5BA16C63B6A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C70F48B-241D-4276-A3C3-5BA16C63B6A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FB7D999-5632-487C-A60A-A86943A16C95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FB7D999-5632-487C-A60A-A86943A16C95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FB7D999-5632-487C-A60A-A86943A16C95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FB7D999-5632-487C-A60A-A86943A16C95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{15CA820D-83A8-4F21-BEAA-F0A8081129A7} = {4B6E766B-BFF5-43D3-AA8C-FFA19EEEB7A8}

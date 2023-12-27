@@ -1,4 +1,4 @@
-using Odin.Api.DTOs;
+using Odin.Shared.ApiDtos.Devices;
 
 namespace Odin.Api.Models;
 
@@ -9,7 +9,7 @@ public class Device : BaseEntity
     public string? Description { get; set; } = null;
     public string? Location { get; set; } = null;
 
-    public static Device FromDTO(CreateDeviceDTO dto)
+    public static Device FromDTO(ApiCreateDeviceDto dto)
     {
         return new()
         {
@@ -22,7 +22,7 @@ public class Device : BaseEntity
 
 public static class DeviceExtensions
 {
-    public static DeviceDTO ToDTO(this Device device) => new()
+    public static ApiDeviceDto ToDTO(this Device device) => new()
     {
         Id = device.Id,
         Name = device.Name,

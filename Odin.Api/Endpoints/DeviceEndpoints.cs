@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using Odin.Api.DTOs;
+using Odin.Shared.ApiDtos.Devices;
 using Odin.Api.Models;
 using Odin.Api.Services;
 
@@ -17,14 +17,14 @@ public static class DeviceEndpoints
         return builder;
     }
 
-    public static async Task<Ok<List<DeviceDTO>>> GetDevices(IDeviceService deviceService)
+    public static async Task<Ok<List<ApiDeviceDto>>> GetDevices(IDeviceService deviceService)
     {
         var devices = await deviceService.GetDevicesAsync();
         var deviceDTOs = devices.Select(device => device.ToDTO()).ToList();
         return TypedResults.Ok(deviceDTOs);
     }
 
-    public static async Task<Results<Ok<DeviceDTO>, NotFound>> GetDeviceById(IDeviceService deviceService, int id)
+    public static async Task<Results<Ok<ApiDeviceDto>, NotFound>> GetDeviceById(IDeviceService deviceService, int id)
     {
         var device = await deviceService.GetDeviceByIdAsync(id);
 
@@ -34,7 +34,7 @@ public static class DeviceEndpoints
         return TypedResults.Ok(device.ToDTO());
     }
 
-    public static async Task<CreatedAtRoute<DeviceDTO>> AddDevice(IDeviceService deviceService, CreateDeviceDTO createDTO)
+    public static async Task<CreatedAtRoute<ApiDeviceDto>> AddDevice(IDeviceService deviceService, ApiCreateDeviceDto createDTO)
     {
         var device = Device.FromDTO(createDTO);
 
@@ -52,7 +52,7 @@ public static class DeviceEndpoints
     public static async Task<Results<NotFound, NoContent>> UpdateDevice(
         IDeviceService deviceService,
         int id,
-        UpdateDeviceDTO updateDTO)
+        ApiUpdateDeviceDto updateDTO)
     {
         var device = await deviceService.GetDeviceByIdAsync(id);
 

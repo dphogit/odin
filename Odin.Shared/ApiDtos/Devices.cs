@@ -1,6 +1,6 @@
-namespace Odin.Api.DTOs;
+namespace Odin.Shared.ApiDtos.Devices;
 
-public record DeviceDTO
+public record ApiDeviceDto
 {
     public required int Id { get; init; }
     public required string Name { get; init; }
@@ -10,14 +10,14 @@ public record DeviceDTO
     public DateTimeOffset UpdatedAt { get; init; }
 }
 
-public record CreateDeviceDTO
+public record ApiCreateDeviceDto
 {
     public required string Name { get; init; }
     public string? Description { get; init; } = null;
     public string? Location { get; init; } = null;
 }
 
-public record UpdateDeviceDTO
+public record ApiUpdateDeviceDto
 {
     public string? Name { get; init; } = null;
     public string? Description { get; init; } = null;

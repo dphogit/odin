@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Odin.Api.DTOs;
+using Odin.Shared.ApiDtos.Devices;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Xunit;
 
@@ -21,7 +21,7 @@ public class CreateDeviceTests(ApiFactory factory) : IAsyncLifetime
     public async Task Create_ValidBody_InsertsDeviceIntoDbAndReturnsCreatedWithHeaderLocation()
     {
         // Arrange
-        CreateDeviceDTO createDeviceDTO = new()
+        ApiCreateDeviceDto createDeviceDTO = new()
         {
             Name = "Device 1",
             Description = "Description 1",
@@ -30,11 +30,11 @@ public class CreateDeviceTests(ApiFactory factory) : IAsyncLifetime
 
         // Act
         var response = await _httpClient.PostAsJsonAsync("devices", createDeviceDTO);
-        var deviceDTO = await response.Content.ReadFromJsonAsync<DeviceDTO>();
+        var deviceDTO = await response.Content.ReadFromJsonAsync<ApiDeviceDto>();
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
-        deviceDTO.Should().BeOfType<DeviceDTO>().Which.Id.Should().BeOfType(typeof(int));
+        deviceDTO.Should().BeOfType<ApiDeviceDto>().Which.Id.Should().BeOfType(typeof(int));
         deviceDTO.Should().BeEquivalentTo(createDeviceDTO);
         response.Headers.Location.Should().BeOfType<Uri>()
             .Which.AbsolutePath.Should().Be($"/devices/{deviceDTO!.Id}");

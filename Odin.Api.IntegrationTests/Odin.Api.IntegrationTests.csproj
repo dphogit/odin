@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Odin.Api\Odin.Api.csproj" />
+    <ProjectReference Include="..\Odin.Shared\Odin.Shared.csproj" />
   </ItemGroup>
 
 </Project>

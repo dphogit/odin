@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Odin.Api.Database;
-using Odin.Api.DTOs;
+using Odin.Shared.ApiDtos.Devices;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
 using Xunit;
@@ -36,9 +36,9 @@ public class GetDeviceTests(ApiFactory factory) : IAsyncLifetime
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var deviceDTO = await response.Content.ReadFromJsonAsync<DeviceDTO>();
-        deviceDTO.Should().BeOfType<DeviceDTO>().Which.Should().BeEquivalentTo(
-            new DeviceDTO()
+        var deviceDTO = await response.Content.ReadFromJsonAsync<ApiDeviceDto>();
+        deviceDTO.Should().BeOfType<ApiDeviceDto>().Which.Should().BeEquivalentTo(
+            new ApiDeviceDto()
             {
                 Id = id,
                 Name = "Device 1",

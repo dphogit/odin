@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Odin.Api.Database;
-using Odin.Api.DTOs;
+using Odin.Shared.ApiDtos.Devices;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
 using Xunit;
@@ -30,7 +30,7 @@ public class UpdateDeviceTests(ApiFactory factory) : IAsyncLifetime
         using var createScope = factory.ScopeFactory.CreateScope();
         var id = createScope.ServiceProvider.GetRequiredService<AppDbContext>().Devices.Single().Id;
 
-        UpdateDeviceDTO updateDeviceDTO = new()
+        ApiUpdateDeviceDto updateDeviceDTO = new()
         {
             Name = "Device 1 Updated",
             Description = "Description 1 Updated",
@@ -54,7 +54,7 @@ public class UpdateDeviceTests(ApiFactory factory) : IAsyncLifetime
         // Arrange
         int id = 1;
 
-        UpdateDeviceDTO updateDeviceDTO = new()
+        ApiUpdateDeviceDto updateDeviceDTO = new()
         {
             Name = "Device 1 Updated",
             Description = "Description 1 Updated",
