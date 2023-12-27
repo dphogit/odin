@@ -33,6 +33,7 @@ app.UsePathBase("/api/v1");
 app.MapGet("/", () => "Hello World!");
 
 app.MapGroup("/devices").MapDeviceEndpoints();
+app.MapGroup("/temperature").MapTemperatureEndpoints();
 
 app.Run();
 

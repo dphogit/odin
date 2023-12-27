@@ -11,6 +11,14 @@
             ],
             "problemMatcher": ["$msCompile"],
             "group": "build"
+        },
+        {
+            "label": "build Api",
+            "command": "dotnet",
+            "type": "process",
+            "args": ["build", "${workspaceFolder}/Odin.Api/Odin.Api.csproj"],
+            "problemMatcher": ["$msCompile"],
+            "group": "build"
         }
     ]
 }
