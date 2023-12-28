@@ -2,12 +2,14 @@ using Odin.Shared.ApiDtos.Devices;
 
 namespace Odin.Api.Models;
 
-public class Device : BaseEntity
+public class Device : CreatedAtAndUpdatedAtEntity
 {
     public int Id { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; } = null;
     public string? Location { get; set; } = null;
+
+    public ICollection<Measurement> Measurements { get; } = new List<Measurement>();
 
     public static Device FromDTO(ApiCreateDeviceDto dto)
     {

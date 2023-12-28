@@ -34,10 +34,11 @@ public static class DeviceEndpoints
         return TypedResults.Ok(device.ToDTO());
     }
 
-    public static async Task<CreatedAtRoute<ApiDeviceDto>> AddDevice(IDeviceService deviceService, ApiCreateDeviceDto createDTO)
+    public static async Task<CreatedAtRoute<ApiDeviceDto>> AddDevice(
+        IDeviceService deviceService,
+        ApiCreateDeviceDto createDTO)
     {
         var device = Device.FromDTO(createDTO);
-
         await deviceService.CreateDeviceAsync(device);
 
         var deviceDTO = device.ToDTO();

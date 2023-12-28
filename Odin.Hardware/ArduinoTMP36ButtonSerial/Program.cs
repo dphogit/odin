@@ -43,7 +43,7 @@ while (true)
 
         var requestBody = new PostRequestJsonBody
         {
-            DegreesCelsius = (float)Math.Round(arduinoReceivedJson.DegreesCelsius, 2),
+            DegreesCelsius = Math.Round(arduinoReceivedJson.DegreesCelsius, 2),
             DeviceId = arduinoReceivedJson.DeviceId,
             Timestamp = DateTime.UtcNow.ToString("o")
         };

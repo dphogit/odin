@@ -20,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped<IDeviceService, DeviceService>();
+builder.Services.AddScoped<IUnitService, UnitService>();
 
 if (env.IsDevelopment())
 {
@@ -34,6 +35,7 @@ app.MapGet("/", () => "Hello World!");
 
 app.MapGroup("/devices").MapDeviceEndpoints();
 app.MapGroup("/temperature").MapTemperatureEndpoints();
+app.MapGroup("/units").MapUnitEndpoints();
 
 app.Run();
 

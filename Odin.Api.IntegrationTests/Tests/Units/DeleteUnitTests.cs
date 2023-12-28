@@ -9,7 +9,7 @@ using Xunit;
 namespace Odin.Api.IntegrationTests.Tests.Devices;
 
 [Collection(nameof(ApiCollection))]
-public class DeleteDeviceTests(ApiFactory factory) : IAsyncLifetime
+public class DeleteUnitTests(ApiFactory factory) : IAsyncLifetime
 {
     private readonly HttpClient _httpClient = factory.HttpClient;
     private readonly Func<Task> _resetDatabase = factory.ResetDatabaseAsync;
@@ -19,24 +19,24 @@ public class DeleteDeviceTests(ApiFactory factory) : IAsyncLifetime
     public Task DisposeAsync() => _resetDatabase();
 
     [Fact]
-    public async Task Delete_DeviceInDb_ReturnsNoContentAndDeletesDevice()
+    public async Task Delete_UnitInDb_ReturnsNoContentAndDeletesUnit()
     {
         // Arrange
-        var device = new Device() { Name = "Device 1", Description = "Description 1", Location = "Location 1" };
-        await factory.InsertAsync(device);
+        var unit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
+        await factory.InsertAsync(unit);
 
         using var createScope = factory.ScopeFactory.CreateScope();
-        var id = createScope.ServiceProvider.GetRequiredService<AppDbContext>().Devices.Single().Id;
+        var id = createScope.ServiceProvider.GetRequiredService<AppDbContext>().Units.Single().Id;
 
         // Act
-        var response = await _httpClient.DeleteAsync($"devices/{id}");
+        var response = await _httpClient.DeleteAsync($"units/{id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         using var verifyScope = factory.Services.CreateScope();
-        var verifiedDevice = await verifyScope.ServiceProvider.GetRequiredService<AppDbContext>().Devices.FindAsync(id);
-        verifiedDevice.Should().BeNull();
+        var verifiedUnit = await verifyScope.ServiceProvider.GetRequiredService<AppDbContext>().Units.FindAsync(id);
+        verifiedUnit.Should().BeNull();
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class DeleteDeviceTests(ApiFactory factory) : IAsyncLifetime
         int id = 1;
 
         // Act
-        var response = await _httpClient.DeleteAsync($"devices/{id}");
+        var response = await _httpClient.DeleteAsync($"units/{id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
