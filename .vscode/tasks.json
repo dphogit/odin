@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Odin.Hardware/ArduinoTMP36ButtonSerial/ArduinoTMP36ButtonSerial.csproj"
+                "${workspaceFolder}/Samples/ArduinoTMP36ButtonSerial/ArduinoTMP36ButtonSerial.csproj"
             ],
             "problemMatcher": ["$msCompile"],
             "group": "build"

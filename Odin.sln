@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odin.Api", "Odin.Api\Odin.Api.csproj", "{B21195DB-2871-4FF4-9127-A470E77BB2FD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Odin.Hardware", "Odin.Hardware", "{4B6E766B-BFF5-43D3-AA8C-FFA19EEEB7A8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{4B6E766B-BFF5-43D3-AA8C-FFA19EEEB7A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArduinoTMP36ButtonSerial", "Odin.Hardware\ArduinoTMP36ButtonSerial\ArduinoTMP36ButtonSerial.csproj", "{15CA820D-83A8-4F21-BEAA-F0A8081129A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArduinoTMP36ButtonSerial", "Samples\ArduinoTMP36ButtonSerial\ArduinoTMP36ButtonSerial.csproj", "{15CA820D-83A8-4F21-BEAA-F0A8081129A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odin.Api.IntegrationTests", "Odin.Api.IntegrationTests\Odin.Api.IntegrationTests.csproj", "{7C70F48B-241D-4276-A3C3-5BA16C63B6A8}"
 EndProject
@@ -17,9 +17,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B21195DB-2871-4FF4-9127-A470E77BB2FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -38,6 +35,9 @@ Global
 		{3FB7D999-5632-487C-A60A-A86943A16C95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FB7D999-5632-487C-A60A-A86943A16C95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FB7D999-5632-487C-A60A-A86943A16C95}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{15CA820D-83A8-4F21-BEAA-F0A8081129A7} = {4B6E766B-BFF5-43D3-AA8C-FFA19EEEB7A8}

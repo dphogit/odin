@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build ArduinoTMP36ButtonSerial",
-            "program": "${workspaceFolder}/Odin.Hardware/ArduinoTMP36ButtonSerial/bin/Debug/net8.0/ArduinoTMP36ButtonSerial.dll",
+            "program": "${workspaceFolder}/Samples/ArduinoTMP36ButtonSerial/bin/Debug/net8.0/ArduinoTMP36ButtonSerial.dll",
             "args": ["${input:port}"],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
