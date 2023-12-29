@@ -20,7 +20,7 @@ public static class DeviceEndpoints
     public static async Task<Ok<List<ApiDeviceDto>>> GetDevices(IDeviceService deviceService)
     {
         var devices = await deviceService.GetDevicesAsync();
-        var deviceDTOs = devices.Select(device => device.ToDTO()).ToList();
+        var deviceDTOs = devices.Select(device => device.ToDto()).ToList();
         return TypedResults.Ok(deviceDTOs);
     }
 
@@ -31,17 +31,17 @@ public static class DeviceEndpoints
         if (device is null)
             return TypedResults.NotFound();
 
-        return TypedResults.Ok(device.ToDTO());
+        return TypedResults.Ok(device.ToDto());
     }
 
     public static async Task<CreatedAtRoute<ApiDeviceDto>> AddDevice(
         IDeviceService deviceService,
         ApiCreateDeviceDto createDTO)
     {
-        var device = Device.FromDTO(createDTO);
+        var device = Device.FromDto(createDTO);
         await deviceService.CreateDeviceAsync(device);
 
-        var deviceDTO = device.ToDTO();
+        var deviceDTO = device.ToDto();
 
         return TypedResults.CreatedAtRoute(
             routeName: nameof(GetDeviceById),

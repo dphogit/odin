@@ -1,14 +1,16 @@
+using Microsoft.EntityFrameworkCore;
 using Odin.Shared.ApiDtos.Units;
 
 namespace Odin.Api.Models;
 
+[Index(nameof(Name), IsUnique = true)]
 public class Unit : CreatedAtAndUpdatedAtEntity
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
     public string Symbol { get; set; } = null!;
 
-    public static Unit FromDTO(ApiCreateUnitDto createUnitDto)
+    public static Unit FromDto(ApiCreateUnitDto createUnitDto)
     {
         return new()
         {
@@ -20,7 +22,7 @@ public class Unit : CreatedAtAndUpdatedAtEntity
 
 public static class UnitExtensions
 {
-    public static ApiUnitDto ToDTO(this Unit unit) => new()
+    public static ApiUnitDto ToDto(this Unit unit) => new()
     {
         Id = unit.Id,
         Name = unit.Name,

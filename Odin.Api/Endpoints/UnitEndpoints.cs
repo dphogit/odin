@@ -20,7 +20,7 @@ public static class UnitEndpoints
     public static async Task<Ok<List<ApiUnitDto>>> GetUnits(IUnitService unitService)
     {
         var units = await unitService.GetUnitsAsync();
-        var unitDTOs = units.Select(unit => unit.ToDTO()).ToList();
+        var unitDTOs = units.Select(unit => unit.ToDto()).ToList();
         return TypedResults.Ok(unitDTOs);
     }
 
@@ -31,17 +31,17 @@ public static class UnitEndpoints
         if (unit is null)
             return TypedResults.NotFound();
 
-        return TypedResults.Ok(unit.ToDTO());
+        return TypedResults.Ok(unit.ToDto());
     }
 
     public async static Task<CreatedAtRoute<ApiUnitDto>> AddUnit(
         IUnitService unitService,
         ApiCreateUnitDto createUnitDto)
     {
-        var unit = Unit.FromDTO(createUnitDto);
+        var unit = Unit.FromDto(createUnitDto);
         await unitService.CreateUnitAsync(unit);
 
-        var unitDTO = unit.ToDTO();
+        var unitDTO = unit.ToDto();
 
         return TypedResults.CreatedAtRoute(
             routeName: nameof(GetUnitById),
