@@ -61,4 +61,43 @@ public class GetDeviceTests(ApiFactory factory) : IAsyncLifetime
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
+
+    [Fact]
+    public async Task GetByName_ExistingDevice_ReturnsDeviceAndOk()
+    {
+        // Arrange
+        var device = new Device() { Name = "Device 1", Description = "Description 1", Location = "Location 1" };
+        await factory.InsertAsync(device);
+
+        // Act
+        var response = await _httpClient.GetAsync($"devices/name/{device.Name}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var deviceDTO = await response.Content.ReadFromJsonAsync<ApiDeviceDto>();
+        deviceDTO.Should().BeOfType<ApiDeviceDto>().Which.Should().BeEquivalentTo(
+            new ApiDeviceDto()
+            {
+                Id = device.Id,
+                Name = "Device 1",
+                Description = "Description 1",
+                Location = "Location 1"
+            },
+            (options) => options.Excluding(dto => dto.CreatedAt).Excluding(dto => dto.UpdatedAt)
+        );
+    }
+
+    [Fact]
+    public async Task GetByName_NonExistentName_ReturnsNotFound()
+    {
+        // Arrange
+        string name = "Device 1";
+
+        // Act
+        var response = await _httpClient.GetAsync($"devices/name/{name}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
 }

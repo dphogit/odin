@@ -16,6 +16,11 @@ public class DeviceService(AppDbContext dbContext) : IDeviceService
         return await dbContext.Devices.FindAsync(id);
     }
 
+    public async Task<Device?> GetDeviceByNameAsync(string name)
+    {
+        return await dbContext.Devices.SingleOrDefaultAsync(device => device.Name == name);
+    }
+
     public async Task CreateDeviceAsync(Device device)
     {
         dbContext.Devices.Add(device);

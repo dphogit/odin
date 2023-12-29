@@ -4,7 +4,6 @@ const int TMP36_PIN = A0;
 const int SWITCH_PIN = 8;
 const int DEBOUNCE_DELAY_MS = 50;
 const int SERIAL_BAUD_RATE = 9600;
-const int DEVICE_ID = 1;
 
 int switchState = LOW;
 int lastSwitchState = LOW;
@@ -12,7 +11,7 @@ unsigned long lastDebounceTime = 0;
 float totalCelsius = 0;
 int count = 0;
 
-StaticJsonDocument<16> jsonDoc;
+StaticJsonDocument<8> jsonDoc;
 
 float readDegreesCelsius();
 void sampleSwitch();
@@ -21,8 +20,6 @@ void sendJsonOverSerial(float degreesCelsius);
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
   while (!Serial) continue;
-
-  jsonDoc["deviceId"] = DEVICE_ID;
 
   pinMode(TMP36_PIN, INPUT);
   pinMode(SWITCH_PIN, INPUT);

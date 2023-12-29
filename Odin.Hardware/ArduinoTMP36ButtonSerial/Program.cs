@@ -2,30 +2,55 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using Odin.Hardware.ArduinoTMP36ButtonSerial;
+using Odin.Shared.ApiDtos.Devices;
+using Odin.Shared.ApiDtos.Temperatures;
 
 const int BAUD_RATE = 9600;
-const string REQUEST_URI = "https://localhost:7156/api/v1/temperature";
+const string ADD_TEMPERATURE_URI = "https://localhost:7156/api/v1/temperatures";
+string GET_DEVICE_URI = $"https://localhost:7156/api/v1/devices/name/{Uri.EscapeDataString("Arduino Uno R3 TMP36 Button Serial")}";
 JsonSerializerOptions JSON_SERIALIZATION_OPTIONS = new() { PropertyNameCaseInsensitive = true };
 
 HttpClient httpClient = new();
 
 if (args.Length != 1)
 {
-    ConsolePrinter.PrintUsage();
+    PrintUsage();
     return 1;
 }
+
+var getResponse = await httpClient.GetAsync(GET_DEVICE_URI);
+try
+{
+    getResponse.EnsureSuccessStatusCode();
+}
+catch (HttpRequestException e)
+{
+    Console.WriteLine($"There was an error getting the device details.");
+    Console.WriteLine($"Error: {e.Message}");
+    return 1;
+}
+
+var device = await getResponse.Content.ReadFromJsonAsync<ApiDeviceDto>(JSON_SERIALIZATION_OPTIONS);
+if (device is null)
+{
+    Console.WriteLine("Error: Failed to deserialize device");
+    return 1;
+}
+
+var deviceId = device.Id;
 
 var port = args[0];
 
 var serialPort = new SerialPort(port, BAUD_RATE);
 serialPort.Open();
-ConsolePrinter.PrintOpenedPort(port);
+PrintOpenedPort(port);
 
+// Handling Ctrl+C
 Console.CancelKeyPress += (sender, e) =>
 {
     e.Cancel = true;
     serialPort.Close();
-    ConsolePrinter.PrintClosedPort(port);
+    PrintClosedPort(port);
 };
 
 while (true)
@@ -41,18 +66,18 @@ while (true)
         if (arduinoReceivedJson is null)
             continue;
 
-        var requestBody = new PostRequestJsonBody
+        var requestBody = new ApiAddTemperatureDto
         {
             DegreesCelsius = Math.Round(arduinoReceivedJson.DegreesCelsius, 2),
-            DeviceId = arduinoReceivedJson.DeviceId,    // TODO this should be fetched from the server by device name
-            Timestamp = DateTime.UtcNow.ToString("o")
+            DeviceId = deviceId,
+            Timestamp = DateTime.UtcNow
         };
 
         try
         {
-            using var response = await httpClient.PostAsJsonAsync(REQUEST_URI, requestBody);
+            using var response = await httpClient.PostAsJsonAsync(ADD_TEMPERATURE_URI, requestBody);
             response.EnsureSuccessStatusCode();
-            ConsolePrinter.PrintSuccessfulRequest(requestBody);
+            Console.WriteLine($"[POST | {DateTimeOffset.UtcNow}]: {requestBody}");
         }
         catch (HttpRequestException e)
         {
@@ -67,3 +92,37 @@ while (true)
 }
 
 return 0;
+
+// ----- Definitions Start -----
+
+static void PrintUsage()
+{
+    Console.WriteLine("\nDescription:");
+    Console.WriteLine("    Reads the serial port connected to an Arduino with a TMP36 temperature sensor and button.");
+    Console.WriteLine("    The Arduino sends a JSON string in the form of {\"degreesCelsius\": <float>, \"deviceId\": <int>} when the button is pressed.");
+    Console.WriteLine("\nUsage:");
+    Console.WriteLine("    dotnet run <PORT>");
+    Console.WriteLine("\nArguments:");
+    Console.WriteLine("    <PORT> The name of the port to listen on e.g. COM3\n");
+}
+
+static void PrintOpenedPort(string port)
+{
+    Console.WriteLine($"\n----Opened serial port: {port}----");
+    Console.WriteLine($"\nPress the button on the circuit to read the temperature.");
+    Console.WriteLine($"Exit with Ctrl+C.\n");
+}
+
+static void PrintClosedPort(string port)
+{
+    Console.WriteLine($"\n----Closed serial port: {port}----\n");
+}
+
+namespace Odin.Hardware.ArduinoTMP36ButtonSerial
+{
+    public record ArduinoTMP36ReadingJson
+    {
+        public double DegreesCelsius { get; init; }
+    }
+}
+

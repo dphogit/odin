@@ -11,6 +11,7 @@ public static class DeviceEndpoints
     {
         builder.MapGet("/", GetDevices).WithName(nameof(GetDevices));
         builder.MapGet("/{id}", GetDeviceById).WithName(nameof(GetDeviceById));
+        builder.MapGet("/name/{name}", GetDeviceByName).WithName(nameof(GetDeviceByName));
         builder.MapPost("/", AddDevice).WithName(nameof(AddDevice));
         builder.MapPut("/{id}", UpdateDevice).WithName(nameof(UpdateDevice));
         builder.MapDelete("/{id}", DeleteDevice).WithName(nameof(DeleteDevice));
@@ -27,6 +28,18 @@ public static class DeviceEndpoints
     public static async Task<Results<Ok<ApiDeviceDto>, NotFound>> GetDeviceById(IDeviceService deviceService, int id)
     {
         var device = await deviceService.GetDeviceByIdAsync(id);
+
+        if (device is null)
+            return TypedResults.NotFound();
+
+        return TypedResults.Ok(device.ToDto());
+    }
+
+    public static async Task<Results<Ok<ApiDeviceDto>, NotFound>> GetDeviceByName(
+        IDeviceService deviceService,
+        string name)
+    {
+        var device = await deviceService.GetDeviceByNameAsync(name);
 
         if (device is null)
             return TypedResults.NotFound();
