@@ -14,11 +14,16 @@ public static class TemperatureEndpoints
         return builder;
     }
 
-    public static Task<Results<Ok<ApiTemperatureDto>, NotFound>> GetTemperatureById(
+    public static async Task<Results<Ok<ApiTemperatureDto>, NotFound>> GetTemperatureById(
         ITemperatureService temperatureService,
         int id)
     {
-        throw new NotImplementedException();
+        var temperature = await temperatureService.GetTemperatureByIdAsync(id);
+
+        if (temperature is null)
+            return TypedResults.NotFound();
+
+        return TypedResults.Ok(temperature.ToDto());
     }
 
     public static async Task<CreatedAtRoute<ApiTemperatureDto>> AddTemperature(

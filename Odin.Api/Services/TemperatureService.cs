@@ -14,6 +14,11 @@ public class TemperatureService(AppDbContext dbContext, IUnitService unitService
         dbContext.Temperatures.Add(temperature);
         await dbContext.SaveChangesAsync();
     }
+
+    public async Task<Temperature?> GetTemperatureByIdAsync(int id)
+    {
+        return await dbContext.Temperatures.FindAsync(id);
+    }
 }
 
 public class TemperatureServiceException(string message) : Exception(message) { }
