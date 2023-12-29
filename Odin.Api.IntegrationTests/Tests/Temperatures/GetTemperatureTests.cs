@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Odin.Api.Database;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
 using Odin.Shared.ApiDtos.Temperatures;
@@ -21,7 +19,7 @@ public class GetTemperatureTests(ApiFactory factory) : IAsyncLifetime
     public Task DisposeAsync() => _resetDatabase();
 
     [Fact]
-    public async Task Get_ExistingId_ReturnsOkWithTemperature()
+    public async Task GetById_ExistingId_ReturnsOkWithTemperature()
     {
         // Arrange
         var device = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
@@ -54,5 +52,18 @@ public class GetTemperatureTests(ApiFactory factory) : IAsyncLifetime
             Timestamp = temperature.Timestamp,
             DegreesCelsius = temperature.Value
         });
+    }
+
+    [Fact]
+    public async Task GetById_NonExistentId_ReturnsNotFound()
+    {
+        // Arrange
+        int id = 1;
+
+        // Act
+        var response = await _httpClient.GetAsync($"temperatures/{id}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

@@ -1,8 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Odin.Api.Database;
 using Odin.Shared.ApiDtos.Devices;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
@@ -28,10 +26,8 @@ public class GetAllDevicesTests(ApiFactory factory) : IAsyncLifetime
         var device2 = new Device() { Name = "Device 2", Description = "Description 2", Location = "Location 2" };
         await factory.InsertAsync(device1, device2);
 
-        using var scope = factory.ScopeFactory.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var id1 = dbContext.Devices.Single(d => d.Name == "Device 1").Id;
-        var id2 = dbContext.Devices.Single(d => d.Name == "Device 2").Id;
+        var id1 = device1.Id;
+        var id2 = device2.Id;
 
         // Act
         var response = await _httpClient.GetAsync("devices");

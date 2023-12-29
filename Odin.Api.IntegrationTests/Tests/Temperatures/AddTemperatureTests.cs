@@ -1,8 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Odin.Api.Database;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
 using Odin.Shared.ApiDtos.Temperatures;
@@ -27,16 +25,12 @@ public class AddTemperatureTests(ApiFactory factory) : IAsyncLifetime
         var device = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
         await factory.InsertAsync(device);
 
-        using var scope = factory.ScopeFactory.CreateScope();
-        var deviceId = scope.ServiceProvider.GetRequiredService<AppDbContext>().Devices
-            .Single(d => d.Name == "Arduino Uno R3 TMP36 Button Serial").Id;
-
         var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
         await factory.InsertAsync(degreesCelsiusUnit);
 
         ApiAddTemperatureDto addTemperatureDto = new()
         {
-            DeviceId = deviceId,
+            DeviceId = device.Id,
             Timestamp = DateTimeOffset.UtcNow,
             DegreesCelsius = 24.5
         };

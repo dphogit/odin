@@ -1,7 +1,5 @@
 using System.Net;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Odin.Api.Database;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
 using Xunit;
@@ -25,17 +23,13 @@ public class DeleteUnitTests(ApiFactory factory) : IAsyncLifetime
         var unit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
         await factory.InsertAsync(unit);
 
-        using var createScope = factory.ScopeFactory.CreateScope();
-        var id = createScope.ServiceProvider.GetRequiredService<AppDbContext>().Units.Single().Id;
-
         // Act
-        var response = await _httpClient.DeleteAsync($"units/{id}");
+        var response = await _httpClient.DeleteAsync($"units/{unit.Id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        using var verifyScope = factory.Services.CreateScope();
-        var verifiedUnit = await verifyScope.ServiceProvider.GetRequiredService<AppDbContext>().Units.FindAsync(id);
+        var verifiedUnit = await factory.FindAsync<Unit>(unit.Id);
         verifiedUnit.Should().BeNull();
     }
 

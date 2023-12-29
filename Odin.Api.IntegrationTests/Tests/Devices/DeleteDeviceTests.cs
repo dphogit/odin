@@ -1,7 +1,5 @@
 using System.Net;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Odin.Api.Database;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
 using Xunit;
@@ -25,17 +23,13 @@ public class DeleteDeviceTests(ApiFactory factory) : IAsyncLifetime
         var device = new Device() { Name = "Device 1", Description = "Description 1", Location = "Location 1" };
         await factory.InsertAsync(device);
 
-        using var createScope = factory.ScopeFactory.CreateScope();
-        var id = createScope.ServiceProvider.GetRequiredService<AppDbContext>().Devices.Single().Id;
-
         // Act
-        var response = await _httpClient.DeleteAsync($"devices/{id}");
+        var response = await _httpClient.DeleteAsync($"devices/{device.Id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        using var verifyScope = factory.Services.CreateScope();
-        var verifiedDevice = await verifyScope.ServiceProvider.GetRequiredService<AppDbContext>().Devices.FindAsync(id);
+        var verifiedDevice = await factory.FindAsync<Device>(device.Id);
         verifiedDevice.Should().BeNull();
     }
 

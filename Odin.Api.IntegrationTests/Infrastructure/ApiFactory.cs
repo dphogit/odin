@@ -77,6 +77,13 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await ExecuteDbContextAsync(async dbContext => await dbContext.AddRangeAsync(entities));
     }
 
+    public async Task<TEntity?> FindAsync<TEntity>(int id) where TEntity : class
+    {
+        using var scope = ScopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        return await dbContext.FindAsync<TEntity>(id);
+    }
+
     private async Task InitializeDbRespawner()
     {
         _dbConnection = new SqlConnection(ConnectionString);

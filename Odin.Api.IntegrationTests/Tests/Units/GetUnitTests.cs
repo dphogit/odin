@@ -1,8 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Odin.Api.Database;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
 using Odin.Shared.ApiDtos.Units;
@@ -27,11 +25,8 @@ public class GetUnitTests(ApiFactory factory) : IAsyncLifetime
         var unit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
         await factory.InsertAsync(unit);
 
-        using var scope = factory.ScopeFactory.CreateScope();
-        var id = scope.ServiceProvider.GetRequiredService<AppDbContext>().Units.Single().Id;
-
         // Act
-        var response = await _httpClient.GetAsync($"units/{id}");
+        var response = await _httpClient.GetAsync($"units/{unit.Id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -40,7 +35,7 @@ public class GetUnitTests(ApiFactory factory) : IAsyncLifetime
         unitDto.Should().BeOfType<ApiUnitDto>().Which.Should().BeEquivalentTo(
             new ApiUnitDto()
             {
-                Id = id,
+                Id = unit.Id,
                 Name = "Degrees Celsius",
                 Symbol = "°C"
             },

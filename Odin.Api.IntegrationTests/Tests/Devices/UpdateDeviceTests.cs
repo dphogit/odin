@@ -1,8 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Odin.Api.Database;
 using Odin.Shared.ApiDtos.Devices;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
@@ -27,9 +25,6 @@ public class UpdateDeviceTests(ApiFactory factory) : IAsyncLifetime
         var device = new Device() { Name = "Device 1", Description = "Description 1", Location = "Location 1" };
         await factory.InsertAsync(device);
 
-        using var createScope = factory.ScopeFactory.CreateScope();
-        var id = createScope.ServiceProvider.GetRequiredService<AppDbContext>().Devices.Single().Id;
-
         ApiUpdateDeviceDto updateDeviceDTO = new()
         {
             Name = "Device 1 Updated",
@@ -38,13 +33,12 @@ public class UpdateDeviceTests(ApiFactory factory) : IAsyncLifetime
         };
 
         // Act
-        var response = await _httpClient.PutAsJsonAsync($"devices/{id}", updateDeviceDTO);
+        var response = await _httpClient.PutAsJsonAsync($"devices/{device.Id}", updateDeviceDTO);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        using var verifyScope = factory.Services.CreateScope();
-        var verifiedDevice = await verifyScope.ServiceProvider.GetRequiredService<AppDbContext>().Devices.FindAsync(id);
+        var verifiedDevice = await factory.FindAsync<Device>(device.Id);
         verifiedDevice.Should().BeEquivalentTo(updateDeviceDTO);
     }
 
