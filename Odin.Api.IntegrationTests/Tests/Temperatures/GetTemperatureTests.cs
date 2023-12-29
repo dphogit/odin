@@ -38,7 +38,7 @@ public class GetTemperatureTests(ApiFactory factory) : IAsyncLifetime
         await factory.InsertAsync(temperature);
 
         // Act
-        var response = await _httpClient.GetAsync($"temperatures/{temperature.Id}");
+        var response = await _httpClient.GetAsync($"/devices/{device.Id}/temperatures/{temperature.Id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -58,10 +58,13 @@ public class GetTemperatureTests(ApiFactory factory) : IAsyncLifetime
     public async Task GetById_NonExistentId_ReturnsNotFound()
     {
         // Arrange
-        int id = 1;
+        var device = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
+        await factory.InsertAsync(device);
+
+        var temperatureId = 1;
 
         // Act
-        var response = await _httpClient.GetAsync($"temperatures/{id}");
+        var response = await _httpClient.GetAsync($"/devices/{device.Id}/temperatures/{temperatureId}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

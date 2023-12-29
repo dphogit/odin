@@ -10,11 +10,14 @@ public static class DeviceEndpoints
     public static RouteGroupBuilder MapDeviceEndpoints(this RouteGroupBuilder builder)
     {
         builder.MapGet("/", GetDevices).WithName(nameof(GetDevices));
-        builder.MapGet("/{id}", GetDeviceById).WithName(nameof(GetDeviceById));
+        builder.MapGet("/{deviceId}", GetDeviceById).WithName(nameof(GetDeviceById));
         builder.MapGet("/name/{name}", GetDeviceByName).WithName(nameof(GetDeviceByName));
         builder.MapPost("/", AddDevice).WithName(nameof(AddDevice));
-        builder.MapPut("/{id}", UpdateDevice).WithName(nameof(UpdateDevice));
-        builder.MapDelete("/{id}", DeleteDevice).WithName(nameof(DeleteDevice));
+        builder.MapPut("/{deviceId}", UpdateDevice).WithName(nameof(UpdateDevice));
+        builder.MapDelete("/{deviceId}", DeleteDevice).WithName(nameof(DeleteDevice));
+
+        builder.MapGroup("/{deviceId}/temperatures").MapTemperatureEndpoints();
+
         return builder;
     }
 
@@ -25,9 +28,11 @@ public static class DeviceEndpoints
         return TypedResults.Ok(deviceDTOs);
     }
 
-    public static async Task<Results<Ok<ApiDeviceDto>, NotFound>> GetDeviceById(IDeviceService deviceService, int id)
+    public static async Task<Results<Ok<ApiDeviceDto>, NotFound>> GetDeviceById(
+        IDeviceService deviceService,
+        int deviceId)
     {
-        var device = await deviceService.GetDeviceByIdAsync(id);
+        var device = await deviceService.GetDeviceByIdAsync(deviceId);
 
         if (device is null)
             return TypedResults.NotFound();
@@ -58,17 +63,17 @@ public static class DeviceEndpoints
 
         return TypedResults.CreatedAtRoute(
             routeName: nameof(GetDeviceById),
-            routeValues: new { id = deviceDTO.Id.ToString() },
+            routeValues: new { deviceId = deviceDTO.Id.ToString() },
             value: deviceDTO
         );
     }
 
     public static async Task<Results<NotFound, NoContent>> UpdateDevice(
         IDeviceService deviceService,
-        int id,
+        int deviceId,
         ApiUpdateDeviceDto updateDTO)
     {
-        var device = await deviceService.GetDeviceByIdAsync(id);
+        var device = await deviceService.GetDeviceByIdAsync(deviceId);
 
         if (device is null)
             return TypedResults.NotFound();
@@ -82,9 +87,11 @@ public static class DeviceEndpoints
         return TypedResults.NoContent();
     }
 
-    public static async Task<Results<NotFound, NoContent>> DeleteDevice(IDeviceService deviceService, int id)
+    public static async Task<Results<NotFound, NoContent>> DeleteDevice(
+        IDeviceService deviceService,
+        int deviceId)
     {
-        var device = await deviceService.GetDeviceByIdAsync(id);
+        var device = await deviceService.GetDeviceByIdAsync(deviceId);
 
         if (device is null)
             return TypedResults.NotFound();

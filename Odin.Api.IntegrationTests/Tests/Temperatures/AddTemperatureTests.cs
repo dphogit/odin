@@ -36,7 +36,7 @@ public class AddTemperatureTests(ApiFactory factory) : IAsyncLifetime
         };
 
         // Act
-        var response = await _httpClient.PostAsJsonAsync("temperatures", addTemperatureDto);
+        var response = await _httpClient.PostAsJsonAsync($"devices/{device.Id}/temperatures", addTemperatureDto);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -45,6 +45,6 @@ public class AddTemperatureTests(ApiFactory factory) : IAsyncLifetime
         temperatureDto.Should().BeOfType<ApiTemperatureDto>().Which.Id.Should().BeOfType(typeof(int));
         temperatureDto.Should().BeEquivalentTo(addTemperatureDto);
         response.Headers.Location.Should().BeOfType<Uri>()
-            .Which.AbsolutePath.Should().Be($"/temperatures/{temperatureDto!.Id}");
+            .Which.AbsolutePath.Should().Be($"/devices/{device.Id}/temperatures/{temperatureDto!.Id}");
     }
 }

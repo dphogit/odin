@@ -5,10 +5,9 @@ using Odin.Hardware.ArduinoTMP36ButtonSerial;
 using Odin.Shared.ApiDtos.Devices;
 using Odin.Shared.ApiDtos.Temperatures;
 
-const int BAUD_RATE = 9600;
-const string ADD_TEMPERATURE_URI = "https://localhost:7156/api/v1/temperatures";
-string GET_DEVICE_URI = $"https://localhost:7156/api/v1/devices/name/{Uri.EscapeDataString("Arduino Uno R3 TMP36 Button Serial")}";
-JsonSerializerOptions JSON_SERIALIZATION_OPTIONS = new() { PropertyNameCaseInsensitive = true };
+const int baudRate = 9600;
+string getDeviceUri = $"https://localhost:7156/api/v1/devices/name/{Uri.EscapeDataString("Arduino Uno R3 TMP36 Button Serial")}";
+JsonSerializerOptions jsonSerializeOptions = new() { PropertyNameCaseInsensitive = true };
 
 HttpClient httpClient = new();
 
@@ -18,10 +17,10 @@ if (args.Length != 1)
     return 1;
 }
 
-var getResponse = await httpClient.GetAsync(GET_DEVICE_URI);
+var getDeviceResponse = await httpClient.GetAsync(getDeviceUri);
 try
 {
-    getResponse.EnsureSuccessStatusCode();
+    getDeviceResponse.EnsureSuccessStatusCode();
 }
 catch (HttpRequestException e)
 {
@@ -30,7 +29,7 @@ catch (HttpRequestException e)
     return 1;
 }
 
-var device = await getResponse.Content.ReadFromJsonAsync<ApiDeviceDto>(JSON_SERIALIZATION_OPTIONS);
+var device = await getDeviceResponse.Content.ReadFromJsonAsync<ApiDeviceDto>(jsonSerializeOptions);
 if (device is null)
 {
     Console.WriteLine("Error: Failed to deserialize device");
@@ -38,10 +37,11 @@ if (device is null)
 }
 
 var deviceId = device.Id;
+string addTemperatureUri = $"https://localhost:7156/api/v1/devices/{deviceId}/temperatures";
 
 var port = args[0];
 
-var serialPort = new SerialPort(port, BAUD_RATE);
+var serialPort = new SerialPort(port, baudRate);
 serialPort.Open();
 PrintOpenedPort(port);
 
@@ -62,7 +62,7 @@ while (true)
         if (line is null)
             continue;
 
-        var arduinoReceivedJson = JsonSerializer.Deserialize<ArduinoTMP36ReadingJson>(line, JSON_SERIALIZATION_OPTIONS);
+        var arduinoReceivedJson = JsonSerializer.Deserialize<ArduinoTMP36ReadingJson>(line, jsonSerializeOptions);
         if (arduinoReceivedJson is null)
             continue;
 
@@ -75,7 +75,7 @@ while (true)
 
         try
         {
-            using var response = await httpClient.PostAsJsonAsync(ADD_TEMPERATURE_URI, requestBody);
+            using var response = await httpClient.PostAsJsonAsync(addTemperatureUri, requestBody);
             response.EnsureSuccessStatusCode();
             Console.WriteLine($"[POST | {DateTimeOffset.UtcNow}]: {requestBody}");
         }
