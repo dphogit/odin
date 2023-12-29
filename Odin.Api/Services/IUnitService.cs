@@ -4,9 +4,10 @@ namespace Odin.Api.Services;
 
 public interface IUnitService
 {
-    Task<IEnumerable<Unit>> GetUnitsAsync();
-    Task<Unit?> GetUnitByIdAsync(int id);
-    Task CreateUnitAsync(Unit unit);
-    Task UpdateUnitAsync(Unit unit);
-    Task DeleteUnitAsync(Unit unit);
+    public Task<IEnumerable<Unit>> GetUnitsAsync();
+    public Task<Unit?> GetUnitByIdAsync(int id);
+    public Task<Unit?> GetUnitByNameAsync(string name);
+    public Task CreateUnitAsync(Unit unit);
+    public Task UpdateUnitAsync(Unit unit);
+    public Task DeleteUnitAsync(Unit unit);
 }

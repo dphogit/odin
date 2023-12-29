@@ -44,7 +44,7 @@ while (true)
         var requestBody = new PostRequestJsonBody
         {
             DegreesCelsius = Math.Round(arduinoReceivedJson.DegreesCelsius, 2),
-            DeviceId = arduinoReceivedJson.DeviceId,
+            DeviceId = arduinoReceivedJson.DeviceId,    // TODO this should be fetched from the server by device name
             Timestamp = DateTime.UtcNow.ToString("o")
         };
 
