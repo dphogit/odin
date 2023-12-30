@@ -16,7 +16,7 @@ public static class DeviceEndpoints
         builder.MapPut("/{deviceId}", UpdateDevice).WithName(nameof(UpdateDevice));
         builder.MapDelete("/{deviceId}", DeleteDevice).WithName(nameof(DeleteDevice));
 
-        builder.MapGroup("/{deviceId}/temperatures").MapTemperatureEndpoints();
+        builder.MapGroup("/{deviceId}/temperatures").MapDeviceTemperatureEndpoints();
 
         return builder;
     }

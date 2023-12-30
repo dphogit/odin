@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Odin.Api.IntegrationTests.Infrastructure;
@@ -9,7 +9,7 @@ using Xunit;
 namespace Odin.Api.IntegrationTests.Tests.Temperatures;
 
 [Collection(nameof(ApiCollection))]
-public class GetTemperatureTests(ApiFactory factory) : IAsyncLifetime
+public class AddTemperatureForDeviceTests(ApiFactory factory) : IAsyncLifetime
 {
     private readonly HttpClient _httpClient = factory.HttpClient;
     private readonly Func<Task> _resetDatabase = factory.ResetDatabaseAsync;
@@ -19,7 +19,7 @@ public class GetTemperatureTests(ApiFactory factory) : IAsyncLifetime
     public Task DisposeAsync() => _resetDatabase();
 
     [Fact]
-    public async Task GetById_ExistingId_ReturnsOkWithTemperature()
+    public async Task AddTemperature_ValidBodyAndExistingDevice_InsertsIntoDbAndReturnsCreatedWithLocation()
     {
         // Arrange
         var device = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
@@ -28,43 +28,41 @@ public class GetTemperatureTests(ApiFactory factory) : IAsyncLifetime
         var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
         await factory.InsertAsync(degreesCelsiusUnit);
 
-        var temperature = new Temperature
+        ApiAddTemperatureDto addTemperatureDto = new()
         {
             DeviceId = device.Id,
             Timestamp = DateTimeOffset.UtcNow,
-            Value = 24.5,
-            UnitId = degreesCelsiusUnit.Id
+            DegreesCelsius = 24.5,
         };
-        await factory.InsertAsync(temperature);
 
         // Act
-        var response = await _httpClient.GetAsync($"/devices/{device.Id}/temperatures/{temperature.Id}");
+        var response = await _httpClient.PostAsJsonAsync($"devices/{device.Id}/temperatures", addTemperatureDto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var temperatureDto = await response.Content.ReadFromJsonAsync<ApiTemperatureDto>();
-        temperatureDto.Should().BeOfType<ApiTemperatureDto>().Which.Id.Should().Be(temperature.Id);
-        temperatureDto.Should().BeEquivalentTo(new ApiTemperatureDto
-        {
-            Id = temperature.Id,
-            DeviceId = device.Id,
-            Timestamp = temperature.Timestamp,
-            DegreesCelsius = temperature.Value
-        });
+        temperatureDto.Should().BeOfType<ApiTemperatureDto>().Which.Id.Should().BeOfType(typeof(int));
+        temperatureDto.Should().BeEquivalentTo(addTemperatureDto);
+        response.Headers.Location.Should().BeOfType<Uri>()
+            .Which.AbsolutePath.Should().Be($"/devices/{device.Id}/temperatures/{temperatureDto!.Id}");
     }
 
     [Fact]
-    public async Task GetById_NonExistentId_ReturnsNotFound()
+    public async Task AddTemperature_NoExistingDevice_ReturnsNotFound()
     {
         // Arrange
-        var device = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
-        await factory.InsertAsync(device);
+        var deviceId = 1;
 
-        var temperatureId = 1;
+        var addTemperatureDto = new ApiAddTemperatureDto
+        {
+            DeviceId = deviceId,
+            Timestamp = DateTimeOffset.UtcNow,
+            DegreesCelsius = 24.5,
+        };
 
         // Act
-        var response = await _httpClient.GetAsync($"/devices/{device.Id}/temperatures/{temperatureId}");
+        var response = await _httpClient.PostAsJsonAsync($"devices/{deviceId}/temperatures", addTemperatureDto);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

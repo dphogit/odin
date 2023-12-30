@@ -38,6 +38,7 @@ public class DeviceService(AppDbContext dbContext, IUnitService unitService) : I
     public async Task AddMeasurementForDeviceAsync(Device device, Measurement measurement)
     {
         // Consider using a factory once the pattern for creating units can be precisely defined
+        // (maybe even extract to a new IDeviceMeasurementService?)
         Unit unit = measurement switch
         {
             Temperature _ => await unitService.GetUnitByNameAsync("Degrees Celsius") ??
