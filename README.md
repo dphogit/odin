@@ -40,6 +40,17 @@ GO
 
 You can exit out of sqlcmd with `quit` and then exit the container interactive shell with `exit`.
 
+This project uses migrations to manage the database schema. Apply the migrations:
+
+```bash
+dotnet ef database update --project Odin.Api
+```
+
+That's the database setup! Some side notes:
+
+- You have System Administrator (SA) privileges on this local database, fine for local development but bad practice for production and rather you should disable the SA account and create a user with minimum privileges required.
+- The password you set in `MSQL_SA_PASSWORD` is the password for the SA user, which you can currently view through a simple `echo $MSSQL_SA_PASSWORD` command. Change this through the `ALTER LOGIN` command if you don't want the SA password to be accessible via your machine's environment variables.
+
 ### REST API
 
 For the API to connect to the database, dotnet [user-secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-8.0&tabs=windows) are used.
@@ -56,9 +67,27 @@ Run the API:
 dotnet run --project Odin.Api
 ```
 
+### Web App
+
+The frontend is a React-TypeScript app which uses [Vite](https://vitejs.dev/). As of Vite 5.0, Vite requires Node.js version 18+. 20+. SOme dependencies may require later versions so upgrade with your package manager if you receive any warnings.
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the app for development (Fast Refresh enabled):
+
+```bash
+npm run dev
+```
+
+Access the app at <http://localhost:3000>.
+
 ## 🧪 Testing
 
-### Integration Tests
+### Integration Tests (Odin.API)
 
 ```bash
 dotnet test --filter FullyQualifiedName~Odin.Api.IntegrationTests

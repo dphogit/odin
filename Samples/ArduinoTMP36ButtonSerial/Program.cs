@@ -17,9 +17,11 @@ if (args.Length != 1)
     return 1;
 }
 
-var getDeviceResponse = await httpClient.GetAsync(getDeviceUri);
+HttpResponseMessage? getDeviceResponse;
+
 try
 {
+    getDeviceResponse = await httpClient.GetAsync(getDeviceUri);
     getDeviceResponse.EnsureSuccessStatusCode();
 }
 catch (HttpRequestException e)
