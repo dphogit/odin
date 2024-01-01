@@ -10,16 +10,25 @@ export const browserRouter = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [
             {
-                path: '/',
-                element: <Navigate to="/devices" replace />,
-            },
-            {
-                path: 'devices',
-                element: <DevicePage />,
-            },
-            {
-                path: '*',
-                element: <Navigate to="/" replace />,
+                errorElement: <ErrorPage />,
+                children: [
+                    {
+                        index: true,
+                        element: <Navigate to="/devices" replace />,
+                    },
+                    {
+                        path: 'devices',
+                        element: <DevicePage />,
+                    },
+                    {
+                        path: 'units',
+                        element: <h1>Units</h1>,
+                    },
+                    {
+                        path: '*',
+                        element: <Navigate to="/" replace />,
+                    },
+                ],
             },
         ],
     },

@@ -1,16 +1,25 @@
-import DevicesIcon from '@mui/icons-material/Devices';
 import { Box, List, ListItem, ListItemButton, ListItemContent, Sheet, Typography } from '@mui/joy';
+import DevicesIcon from '@mui/icons-material/Devices';
+import StraightenIcon from '@mui/icons-material/Straighten';
+import { Link, useMatch, useResolvedPath } from 'react-router-dom';
 
-// TODO Add navigational features when required
+interface NavItemProps {
+    to: string;
+    icon: React.ReactNode;
+    label: string;
+}
 
-function NavItem({ isSelected }: { isSelected?: boolean }) {
+function NavItem({ to, icon, label }: NavItemProps) {
+    const resolved = useResolvedPath(to);
+    const match = useMatch({ path: resolved.pathname, end: true });
+
     return (
-        <ListItem>
-            <ListItemButton selected={isSelected} sx={{ gap: '16px' }}>
-                <DevicesIcon />
+        <ListItem component={Link} to={to} sx={{ textDecoration: 'none' }}>
+            <ListItemButton selected={Boolean(match)} sx={{ gap: '16px' }}>
+                {icon}
                 <ListItemContent>
-                    <Typography level="title-sm" fontWeight={isSelected ? 'bold' : 'normal'}>
-                        Devices
+                    <Typography level="title-sm" fontWeight={match ? 'bold' : 'normal'}>
+                        {label}
                     </Typography>
                 </ListItemContent>
             </ListItemButton>
@@ -26,7 +35,8 @@ function NavItems() {
                 gap: 1,
             }}
         >
-            <NavItem isSelected />
+            <NavItem to="/devices" icon={<DevicesIcon />} label="Devices" />
+            <NavItem to="/units" icon={<StraightenIcon />} label="Units" />
         </List>
     );
 }
