@@ -69,7 +69,7 @@ dotnet run --project Odin.Api
 
 ### Web App
 
-The frontend is a React-TypeScript app which uses [Vite](https://vitejs.dev/). As of Vite 5.0, Vite requires Node.js version 18+. 20+. SOme dependencies may require later versions so upgrade with your package manager if you receive any warnings.
+The frontend is a React-TypeScript app which uses [Vite](https://vitejs.dev/). As of Vite 5.0, Vite requires Node.js version 18+. 20+. Some dependencies may require later versions so upgrade with your package manager if you receive any warnings. The project uses the [Bulletproof React](https://github.com/alan2207/bulletproof-react) to guide the project structure and best practices.
 
 Install dependencies:
 

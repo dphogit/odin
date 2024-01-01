@@ -1,14 +1,26 @@
 import '@fontsource/inter';
-import { CssBaseline, CssVarsProvider } from '@mui/joy';
-import { Sidebar } from './components';
+import { Box, CssBaseline, CssVarsProvider, GlobalStyles, Stack } from '@mui/joy';
+import { Outlet } from 'react-router-dom';
+import { Sidebar } from 'components';
 
-function App() {
+export default function App() {
     return (
         <CssVarsProvider>
             <CssBaseline />
-            <Sidebar />
+            <GlobalStyles
+                styles={{
+                    ':root': {
+                        '--Sidebar-width': '260px',
+                        '--Page-padding-top': '36px',
+                    },
+                }}
+            />
+            <Stack spacing={0} direction="row" alignItems="flex-start">
+                <Sidebar />
+                <Box component="main" flex={1} px="48px" pt="var(--Page-padding-top)">
+                    <Outlet />
+                </Box>
+            </Stack>
         </CssVarsProvider>
     );
 }
-
-export default App;
