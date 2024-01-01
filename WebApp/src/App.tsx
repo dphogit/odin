@@ -1,5 +1,14 @@
+import '@fontsource/inter';
+import { CssBaseline, CssVarsProvider } from '@mui/joy';
+import { Sidebar } from './components';
+
 function App() {
-    return <h1>Hello World!</h1>;
+    return (
+        <CssVarsProvider>
+            <CssBaseline />
+            <Sidebar />
+        </CssVarsProvider>
+    );
 }
 
 export default App;
