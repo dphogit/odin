@@ -1,1 +1,1 @@
-export { default as DevicesTable } from './DevicesTable';
+export { default as DeviceCard } from './DeviceCard';

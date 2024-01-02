@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "WebApp - Chrome (Localhost)",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/WebApp"
+        },
+        {
             "name": "ArduinoTMP36ButtonSerial",
             "type": "coreclr",
             "request": "launch",

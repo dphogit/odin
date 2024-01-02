@@ -14,8 +14,13 @@ function NavItem({ to, icon, label }: NavItemProps) {
     const match = useMatch({ path: resolved.pathname, end: true });
 
     return (
-        <ListItem component={Link} to={to} sx={{ textDecoration: 'none' }}>
-            <ListItemButton selected={Boolean(match)} sx={{ gap: '16px' }}>
+        <ListItem>
+            <ListItemButton
+                selected={Boolean(match)}
+                sx={{ gap: '16px', textDecoration: 'none' }}
+                component={Link}
+                to={to}
+            >
                 {icon}
                 <ListItemContent>
                     <Typography level="title-sm" fontWeight={match ? 'bold' : 'normal'}>
@@ -55,7 +60,7 @@ function Sidebar() {
                 borderColor: 'divider',
             }}
         >
-            <Typography level="h3" component="h1">
+            <Typography level="h3" component="h2">
                 📱 Odin
             </Typography>
             <Box pt="24px">
