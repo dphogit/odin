@@ -8,6 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var env = builder.Environment;
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder => builder.AllowAnyOrigin());
+});
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.Converters.Add(new DateTimeOffsetJsonConverter());
@@ -29,6 +34,8 @@ if (env.IsDevelopment())
 }
 
 var app = builder.Build();
+
+app.UseCors();
 
 app.UsePathBase("/api/v1");
 

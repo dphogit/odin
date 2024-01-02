@@ -1,9 +1,17 @@
-import { Typography } from '@mui/joy';
+import { Box, Typography } from '@mui/joy';
+import { useLoaderData } from 'react-router-dom';
+import { IDevice } from '../types';
+import { DevicesTable } from '../components';
 
 export default function DevicePage() {
+    const devices = useLoaderData() as IDevice[];
+
     return (
-        <Typography level="h1" lineHeight={1}>
-            Device Page
-        </Typography>
+        <div>
+            <Typography level="h1">Device Page</Typography>
+            <Box mt="24px">
+                <DevicesTable devices={devices} />
+            </Box>
+        </div>
     );
 }
