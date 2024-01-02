@@ -38,7 +38,7 @@ export default function DeviceCard({ device }: DeviceCardProps) {
                     {device.description}
                 </Typography>
             </CardContent>
-            <CardActions sx={{ pt: '8px', justifyContent: 'flex-end' }}>
+            <CardActions sx={{ pt: '4px', justifyContent: 'flex-end' }}>
                 <div>
                     <Button variant="plain">Edit</Button>
                 </div>

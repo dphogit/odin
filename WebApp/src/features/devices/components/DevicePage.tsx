@@ -1,11 +1,10 @@
 import { Box, Button, Grid, Typography } from '@mui/joy';
 import AddIcon from '@mui/icons-material/Add';
-import { useLoaderData } from 'react-router-dom';
-import { IDevice } from '../types';
-import { DeviceCard } from '../components';
+import DeviceCard from './DeviceCard';
+import { useGetDevicesQuery } from '..';
 
 export default function DevicePage() {
-    const devices = useLoaderData() as IDevice[];
+    const { data: devices } = useGetDevicesQuery();
 
     return (
         <Box maxWidth="1280px" mx="auto">

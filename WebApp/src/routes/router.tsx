@@ -1,11 +1,8 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import App from 'App';
 import ErrorPage from 'components/ErrorPage';
-import { DevicePage, getDevices } from 'features/devices';
-
-function deviceLoader() {
-    return getDevices();
-}
+import { DevicePage, getDevicesLoader } from 'features/devices';
+import { reactQueryClient } from 'providers/ReactQueryClientProvider';
 
 export const browserRouter = createBrowserRouter([
     {
@@ -23,7 +20,7 @@ export const browserRouter = createBrowserRouter([
                     {
                         path: 'devices',
                         element: <DevicePage />,
-                        loader: deviceLoader,
+                        loader: getDevicesLoader(reactQueryClient),
                     },
                     {
                         path: 'units',
