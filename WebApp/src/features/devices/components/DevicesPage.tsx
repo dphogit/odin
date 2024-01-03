@@ -7,7 +7,7 @@ export default function DevicesPage() {
     const { data: devices } = useGetDevicesQuery();
 
     return (
-        <Box maxWidth="1280px" mx="auto">
+        <Box maxWidth="1280px" mx="auto" px="24px">
             <Box display="flex" justifyContent="space-between" alignItems="stretch">
                 <Typography level="h2" component="h1">
                     Your Devices

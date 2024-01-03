@@ -1,4 +1,16 @@
-import { CssVarsProvider, CssBaseline, GlobalStyles } from '@mui/joy';
+import { CssVarsProvider, CssBaseline, GlobalStyles, extendTheme } from '@mui/joy';
+
+const theme = extendTheme({
+    components: {
+        JoyFormLabel: {
+            styleOverrides: {
+                root: {
+                    fontWeight: 700,
+                },
+            },
+        },
+    },
+});
 
 export interface JoyUIProviderProps {
     children: React.ReactNode;
@@ -6,7 +18,7 @@ export interface JoyUIProviderProps {
 
 export default function JoyUIProvider({ children }: JoyUIProviderProps) {
     return (
-        <CssVarsProvider>
+        <CssVarsProvider theme={theme}>
             <CssBaseline />
             <GlobalStyles
                 styles={{

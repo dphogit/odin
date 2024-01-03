@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardContent, Link, Typography } from '@mui/joy';
+import { Button, Card, CardActions, CardContent, Link, Typography } from '@mui/joy';
 import { Link as RouterLink } from 'react-router-dom';
 import { PathNames } from 'routes/util';
 import { IDevice } from '../types';
@@ -29,11 +29,11 @@ export default function DeviceCard({ device }: DeviceCardProps) {
                     </Link>
                 </Typography>
                 <Typography level="body-xs" fontWeight={700}>
-                    {device.location ?? 'No Location Specified'}
+                    {device.location ?? <i>No Location Specified</i>}
                 </Typography>
                 <Typography
                     level="body-sm"
-                    title={device.description}
+                    title={device.description ?? undefined}
                     sx={{
                         mt: '12px',
                         display: '-webkit-box',
@@ -42,13 +42,13 @@ export default function DeviceCard({ device }: DeviceCardProps) {
                         overflow: 'hidden',
                     }}
                 >
-                    {device.description}
+                    {device.description ?? <i>No Description</i>}
                 </Typography>
-                <Box pt="12px" display="flex" justifyContent="flex-end">
+                <CardActions sx={{ alignSelf: 'flex-end' }}>
                     <Button variant="plain" size="sm">
                         Edit
                     </Button>
-                </Box>
+                </CardActions>
             </CardContent>
         </Card>
     );

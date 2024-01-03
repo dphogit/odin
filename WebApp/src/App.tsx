@@ -9,7 +9,7 @@ function AppLayout() {
     return (
         <Stack spacing={0} direction="row" alignItems="flex-start">
             <Sidebar />
-            <Box component="main" flex={1} px="48px" pt="var(--Page-padding-top)">
+            <Box component="main" flex={1} pt="var(--Page-padding-top)">
                 <Outlet />
             </Box>
         </Stack>
