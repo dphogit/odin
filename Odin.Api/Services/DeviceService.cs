@@ -16,6 +16,14 @@ public class DeviceService(AppDbContext dbContext, IUnitService unitService) : I
         return await dbContext.Devices.FindAsync(id);
     }
 
+    public async Task<Device?> GetDeviceByIdAsync<TMeasurement>(int id) where TMeasurement : Measurement
+    {
+        return await dbContext.Devices
+            .Include(device => device.Measurements.Where(measurement => measurement is TMeasurement))
+            .ThenInclude(measurement => measurement.Unit)
+            .SingleOrDefaultAsync(device => device.Id == id);
+    }
+
     public async Task<Device?> GetDeviceByNameAsync(string name)
     {
         return await dbContext.Devices.SingleOrDefaultAsync(device => device.Name == name);
@@ -37,8 +45,6 @@ public class DeviceService(AppDbContext dbContext, IUnitService unitService) : I
 
     public async Task AddMeasurementForDeviceAsync(Device device, Measurement measurement)
     {
-        // Consider using a factory once the pattern for creating units can be precisely defined
-        // (maybe even extract to a new IDeviceMeasurementService?)
         Unit unit = measurement switch
         {
             Temperature _ => await unitService.GetUnitByNameAsync("Degrees Celsius") ??
