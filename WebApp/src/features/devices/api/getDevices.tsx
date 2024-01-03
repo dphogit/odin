@@ -2,8 +2,8 @@ import { QueryClient, useQuery } from '@tanstack/react-query';
 import axiosInstance from 'lib/axios';
 import { z } from 'zod';
 import { IDevice } from '../types';
-import { useLoaderData } from 'react-router-dom';
 import { LoaderReturnType } from 'types';
+import { useLoaderData } from 'react-router-dom';
 
 const getDevicesResponseSchema = z.array(
     z.object({
@@ -16,12 +16,12 @@ const getDevicesResponseSchema = z.array(
     })
 );
 
-export async function getDevices(): Promise<IDevice[]> {
+async function getDevices(): Promise<IDevice[]> {
     const response = await axiosInstance.get('/devices');
     return getDevicesResponseSchema.parse(response.data);
 }
 
-export const getDevicesQuery = { queryKey: ['devices'], queryFn: getDevices };
+const getDevicesQuery = { queryKey: ['devices'], queryFn: getDevices };
 
 export function useGetDevicesQuery() {
     const initialData = useLoaderData() as GetDevicesLoaderReturnType;
@@ -32,10 +32,10 @@ export function useGetDevicesQuery() {
     });
 }
 
-export type GetDevicesLoaderReturnType = LoaderReturnType<typeof getDevicesLoader>;
-
 export function getDevicesLoader(queryClient: QueryClient) {
     return async () => {
         return queryClient.ensureQueryData(getDevicesQuery);
     };
 }
+
+type GetDevicesLoaderReturnType = LoaderReturnType<typeof getDevicesLoader>;

@@ -1,9 +1,9 @@
 import { Box, Button, Grid, Typography } from '@mui/joy';
 import AddIcon from '@mui/icons-material/Add';
 import DeviceCard from './DeviceCard';
-import { useGetDevicesQuery } from '..';
+import { useGetDevicesQuery } from '../api';
 
-export default function DevicePage() {
+export default function DevicesPage() {
     const { data: devices } = useGetDevicesQuery();
 
     return (

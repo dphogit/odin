@@ -1,7 +1,8 @@
-import { Box, List, ListItem, ListItemButton, ListItemContent, Sheet, Typography } from '@mui/joy';
 import DevicesIcon from '@mui/icons-material/Devices';
 import StraightenIcon from '@mui/icons-material/Straighten';
-import { Link, useMatch, useResolvedPath } from 'react-router-dom';
+import { Box, List, ListItem, ListItemButton, ListItemContent, Sheet, Typography } from '@mui/joy';
+import { Link, useLocation, useResolvedPath } from 'react-router-dom';
+import { PathNames } from 'routes/util';
 
 interface NavItemProps {
     to: string;
@@ -10,8 +11,9 @@ interface NavItemProps {
 }
 
 function NavItem({ to, icon, label }: NavItemProps) {
+    const location = useLocation();
     const resolved = useResolvedPath(to);
-    const match = useMatch({ path: resolved.pathname, end: true });
+    const match = location.pathname.includes(resolved.pathname);
 
     return (
         <ListItem>
@@ -40,8 +42,8 @@ function NavItems() {
                 gap: 1,
             }}
         >
-            <NavItem to="/devices" icon={<DevicesIcon />} label="Devices" />
-            <NavItem to="/units" icon={<StraightenIcon />} label="Units" />
+            <NavItem to={PathNames.DEVICES} icon={<DevicesIcon />} label="Devices" />
+            <NavItem to={PathNames.UNITS} icon={<StraightenIcon />} label="Units" />
         </List>
     );
 }

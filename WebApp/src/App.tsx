@@ -1,7 +1,7 @@
 import '@fontsource/inter';
 import { Box, Stack } from '@mui/joy';
 import { Sidebar } from 'components';
-import JoyUIProvider from 'providers/JoyUiProvider';
+import JoyUIProvider from 'providers/JoyUIProvider';
 import ReactQueryClientProvider from 'providers/ReactQueryClientProvider';
 import { Outlet } from 'react-router-dom';
 
