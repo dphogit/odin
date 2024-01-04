@@ -1,22 +1,14 @@
 import { QueryClient, useQuery } from '@tanstack/react-query';
 import axiosInstance from 'lib/axios';
-import { z } from 'zod';
-import { IDevice } from '../types';
-import { LoaderReturnType } from 'types';
 import { useLoaderData } from 'react-router-dom';
+import { LoaderReturnType } from 'types';
+import { z } from 'zod';
+import { apiDeviceDtoSchema } from '../types';
 
-const getDevicesResponseSchema = z.array(
-    z.object({
-        id: z.number(),
-        name: z.string(),
-        description: z.string().optional(),
-        location: z.string().optional(),
-        createdAt: z.string().datetime({ offset: true }),
-        updatedAt: z.string().datetime({ offset: true }),
-    })
-);
+const getDevicesResponseSchema = z.array(apiDeviceDtoSchema);
+type GetDevicesResponse = z.infer<typeof getDevicesResponseSchema>;
 
-async function getDevices(): Promise<IDevice[]> {
+async function getDevices(): Promise<GetDevicesResponse> {
     const response = await axiosInstance.get('/devices');
     return getDevicesResponseSchema.parse(response.data);
 }

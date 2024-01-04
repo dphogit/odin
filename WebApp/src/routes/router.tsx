@@ -17,6 +17,10 @@ export const browserRouter = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [
             {
+                index: true,
+                element: <Navigate to={PathNames.DEVICES} replace />,
+            },
+            {
                 errorElement: <ErrorPage />,
                 path: PathNames.DEVICES,
                 children: [

@@ -1,10 +1,10 @@
 import { Button, Card, CardActions, CardContent, Link, Typography } from '@mui/joy';
 import { Link as RouterLink } from 'react-router-dom';
 import { PathNames } from 'routes/util';
-import { IDevice } from '../types';
+import { ApiDeviceDto } from '../types';
 
 interface DeviceCardProps {
-    device: IDevice;
+    device: ApiDeviceDto;
 }
 
 export default function DeviceCard({ device }: DeviceCardProps) {

@@ -12,10 +12,10 @@ import {
     Textarea,
     Typography,
 } from '@mui/joy';
-import { IDevice } from '../types';
+import { ApiDeviceDto } from '../types';
 
 interface DeviceInfoCardProps {
-    device: IDevice;
+    device: ApiDeviceDto;
 }
 
 export default function DeviceDisplayInfoCard({ device }: DeviceInfoCardProps) {
