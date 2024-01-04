@@ -6,7 +6,7 @@ using Odin.Shared.ApiDtos.Temperatures;
 namespace Odin.Api.Endpoints;
 
 /// <summary>
-/// Endpoints attached onto a targetted device's endpoint group i.e. /devices/{deviceId}/temperatures.
+/// Temperatures endpoints attached onto a targetted device's endpoint group i.e. /devices/{deviceId}/temperatures.
 /// </summary>
 public static class DeviceTemperaturesEndpoints
 {

@@ -20,9 +20,9 @@ interface DeviceTemperatureGraphProps {
     containerHeight: number;
 }
 
-function formatTimestamp(timestamp: Date): string {
-    return dayjs(timestamp).format('DD-MM-YY HH:mm');
-}
+// function transformToAverageDaily(data: DeviceTemperatureGraphDataPoint[]): DeviceTemperatureGraphDataPoint[] {
+//     return [];
+// }
 
 export default function DeviceTemperatureGraph({
     data,
@@ -35,8 +35,9 @@ export default function DeviceTemperatureGraph({
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         dataKey="timestamp"
-                        tickFormatter={formatTimestamp}
-                        height={50}
+                        tickFormatter={(timestamp) => dayjs(timestamp).format('DD-MM-YY')}
+                        tick={{ dy: 12.5 }}
+                        height={65}
                         label={{
                             value: 'Time',
                             position: 'insideBottomRight',
@@ -44,6 +45,8 @@ export default function DeviceTemperatureGraph({
                     />
                     <YAxis
                         dataKey="degreesCelsius"
+                        width={80}
+                        tick={{ dx: -5 }}
                         label={{
                             value: 'Degrees (°C)',
                             position: 'insideLeft',
@@ -55,8 +58,14 @@ export default function DeviceTemperatureGraph({
                             (dataMax: number) => Math.ceil(dataMax + 2),
                         ]}
                     />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="degreesCelsius" activeDot={{ r: 8 }} />
+                    <Tooltip formatter={(value) => [`${value} °C`, null]} />
+                    <Line
+                        type="monotone"
+                        dataKey="degreesCelsius"
+                        dot={{ r: 6 }}
+                        activeDot={{ r: 12 }}
+                        strokeWidth={3}
+                    />
                 </LineChart>
             </ResponsiveContainer>
         </Box>

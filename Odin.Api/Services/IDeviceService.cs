@@ -11,12 +11,6 @@ public interface IDeviceService
     /// </summary>
     public Task<Device?> GetDeviceByIdAsync(int id);
 
-    /// <summary>
-    /// Gets a device by id and includes measurements of type <typeparamref name="TMeasurement"/>. Each measurement
-    /// also includes it's associated unit.
-    /// </summary>
-    public Task<Device?> GetDeviceByIdAsync<TMeasurement>(int id) where TMeasurement : Measurement;
-
     public Task<Device?> GetDeviceByNameAsync(string name);
 
     public Task CreateDeviceAsync(Device device);

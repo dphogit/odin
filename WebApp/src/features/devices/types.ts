@@ -14,7 +14,6 @@ export const apiDeviceDtoSchema = z.object({
     location: z.string().optional(),
     createdAt: z.string().datetime({ offset: true }),
     updatedAt: z.string().datetime({ offset: true }),
-    temperatures: apiTemperatureDtoSchema.array().optional(),
 });
 
 export type ApiDeviceDto = z.infer<typeof apiDeviceDtoSchema>;

@@ -14,7 +14,7 @@ function transformToTemperatureGraphData(
 }
 
 export default function DeviceDetailsPage() {
-    const { data: device } = useGetDeviceDetailsQuery({ withTemperatures: true });
+    const { data: device } = useGetDeviceDetailsQuery();
 
     const deviceTemperatureGraphData = transformToTemperatureGraphData(device.temperatures ?? []);
 

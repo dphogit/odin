@@ -30,19 +30,14 @@ public static class DeviceEndpoints
 
     public static async Task<Results<Ok<ApiDeviceDto>, NotFound>> GetDeviceById(
         IDeviceService deviceService,
-        int deviceId,
-        bool? withTemperatures)
+        int deviceId)
     {
-        bool includeTemperaturesInResponse = withTemperatures is true;
-
-        var device = includeTemperaturesInResponse
-            ? await deviceService.GetDeviceByIdAsync<Temperature>(deviceId)
-            : await deviceService.GetDeviceByIdAsync(deviceId);
+        var device = await deviceService.GetDeviceByIdAsync(deviceId);
 
         if (device is null)
             return TypedResults.NotFound();
 
-        return TypedResults.Ok(device.ToDto(includeTemperaturesInResponse));
+        return TypedResults.Ok(device.ToDto());
     }
 
     public static async Task<Results<Ok<ApiDeviceDto>, NotFound>> GetDeviceByName(
