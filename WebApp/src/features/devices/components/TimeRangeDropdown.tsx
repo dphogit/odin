@@ -15,7 +15,7 @@ export default function TimeRangeDropdown({
         if (!newValue) return;
         const searchParams = new URLSearchParams();
         searchParams.set(DAYS_SEARCH_PARAMS_KEY, newValue);
-        submit(searchParams);
+        submit(searchParams, { replace: true });
     };
 
     if (!isDaysWithinDropdownOptions(defaultValue)) {

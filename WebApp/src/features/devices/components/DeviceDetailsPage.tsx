@@ -4,6 +4,8 @@ import { ApiTemperatureDto } from '../types';
 import DeviceDisplayInfoCard from './DeviceDisplayInfoCard';
 import DeviceTemperatureGraph, { DeviceTemperatureGraphDataPoint } from './DeviceTemperatureGraph';
 import TimeRangeDropdown from './TimeRangeDropdown';
+import { useNavigation } from 'react-router-dom';
+import { DAYS_SEARCH_PARAMS_KEY } from '../util';
 
 function transformToTemperatureGraphData(
     data: ApiTemperatureDto[]
@@ -14,12 +16,23 @@ function transformToTemperatureGraphData(
     }));
 }
 
+/**
+ * Determines if we are fetching temperatures for a new selected time range (not in cache)
+ * from the dropdown. Can be used to show a loading indicator.
+ */
+function useIsFetchingTemperatures() {
+    const navigation = useNavigation();
+    return new URLSearchParams(navigation.location?.search).has(DAYS_SEARCH_PARAMS_KEY);
+}
+
 export default function DeviceDetailsPage() {
     const { data: response } = useGetDeviceDetailsQuery();
 
     const deviceTemperatureGraphData = transformToTemperatureGraphData(
         response.device.temperatures ?? []
     );
+
+    const isFetchingTemperatures = useIsFetchingTemperatures();
 
     return (
         <Box px="24px">
@@ -46,6 +59,7 @@ export default function DeviceDetailsPage() {
                         <DeviceTemperatureGraph
                             data={deviceTemperatureGraphData}
                             containerHeight={600}
+                            isLoading={isFetchingTemperatures}
                         />
                     </Sheet>
                 </Grid>

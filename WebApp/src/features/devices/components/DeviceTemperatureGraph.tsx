@@ -1,4 +1,4 @@
-import { Box } from '@mui/joy';
+import { Box, CircularProgress, Stack, Typography } from '@mui/joy';
 import dayjs from 'dayjs';
 import {
     CartesianGrid,
@@ -20,11 +20,6 @@ export interface DeviceTemperatureGraphDataPoint {
 interface DataPoint {
     timestamp: string;
     degreesCelsius: number;
-}
-
-interface DeviceTemperatureGraphProps {
-    data: DeviceTemperatureGraphDataPoint[];
-    containerHeight: number;
 }
 
 /**
@@ -55,53 +50,77 @@ function getDailyAverages(data: DeviceTemperatureGraphDataPoint[]): DataPoint[] 
     return dailyAverages;
 }
 
+interface DeviceTemperatureGraphProps {
+    data: DeviceTemperatureGraphDataPoint[];
+    containerHeight: number;
+    isLoading?: boolean;
+}
+
 export default function DeviceTemperatureGraph({
     data,
     containerHeight,
+    isLoading,
 }: DeviceTemperatureGraphProps) {
     const dailyAverageData = getDailyAverages(data);
 
     return (
         <Box sx={{ width: '100%', height: containerHeight, pl: '4px', pb: '8px' }}>
-            <ResponsiveContainer>
-                <LineChart data={dailyAverageData} margin={{ right: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                        dataKey="timestamp"
-                        tickFormatter={(timestamp) => dayjs(timestamp).format('DD MMM')}
-                        tick={{ dy: 12.5, fontSize: 14 }}
-                        height={65}
-                        label={{
-                            value: 'Day',
-                            position: 'insideBottom',
-                        }}
-                    />
-                    <YAxis
-                        dataKey="degreesCelsius"
-                        width={80}
-                        tick={{ dx: -10, fontSize: 14 }}
-                        label={{
-                            value: 'Degrees (°C)',
-                            position: 'insideLeft',
-                            angle: -90,
-                            offset: 15,
-                        }}
-                        domain={[
-                            // Add buffer spacing around line as we use a relative range
-                            (dataMin: number) => Math.floor(dataMin - DAILY_DEGREE_BUFFER),
-                            (dataMax: number) => Math.ceil(dataMax + DAILY_DEGREE_BUFFER),
-                        ]}
-                    />
-                    <Tooltip formatter={(value) => [`${value} °C`, null]} />
-                    <Line
-                        type="linear"
-                        dataKey="degreesCelsius"
-                        dot={{ r: 6 }}
-                        activeDot={{ r: 12 }}
-                        strokeWidth={3}
-                    />
-                </LineChart>
-            </ResponsiveContainer>
+            {isLoading ? (
+                <Box
+                    sx={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Stack alignItems="center" spacing="16px">
+                        <CircularProgress size="lg" />
+                        <Typography>Loading...</Typography>
+                    </Stack>
+                </Box>
+            ) : (
+                <ResponsiveContainer>
+                    <LineChart data={dailyAverageData} margin={{ right: 20 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                            dataKey="timestamp"
+                            tickFormatter={(timestamp) => dayjs(timestamp).format('DD MMM')}
+                            tick={{ dy: 12.5, fontSize: 14 }}
+                            height={65}
+                            label={{
+                                value: 'Day',
+                                position: 'insideBottom',
+                            }}
+                        />
+                        <YAxis
+                            dataKey="degreesCelsius"
+                            width={80}
+                            tick={{ dx: -10, fontSize: 14 }}
+                            label={{
+                                value: 'Degrees (°C)',
+                                position: 'insideLeft',
+                                angle: -90,
+                                offset: 15,
+                            }}
+                            domain={[
+                                // Add buffer spacing around line as we use a relative range
+                                (dataMin: number) => Math.floor(dataMin - DAILY_DEGREE_BUFFER),
+                                (dataMax: number) => Math.ceil(dataMax + DAILY_DEGREE_BUFFER),
+                            ]}
+                        />
+                        <Tooltip formatter={(value) => [`${value} °C`, null]} />
+                        <Line
+                            type="linear"
+                            dataKey="degreesCelsius"
+                            dot={{ r: 6 }}
+                            activeDot={{ r: 12 }}
+                            strokeWidth={3}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            )}
         </Box>
     );
 }

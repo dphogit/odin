@@ -1,5 +1,4 @@
 import DevicesIcon from '@mui/icons-material/Devices';
-import StraightenIcon from '@mui/icons-material/Straighten';
 import { Box, List, ListItem, ListItemButton, ListItemContent, Sheet, Typography } from '@mui/joy';
 import { Link, useLocation, useResolvedPath } from 'react-router-dom';
 import { PathNames } from 'routes/util';
@@ -43,7 +42,6 @@ function NavItems() {
             }}
         >
             <NavItem to={PathNames.DEVICES} icon={<DevicesIcon />} label="Devices" />
-            <NavItem to={PathNames.UNITS} icon={<StraightenIcon />} label="Units" />
         </List>
     );
 }

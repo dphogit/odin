@@ -36,11 +36,6 @@ export const browserRouter = createBrowserRouter([
                     },
                 ],
             },
-            {
-                errorElement: <ErrorPage />,
-                path: PathNames.UNITS,
-                element: <h1>Units</h1>,
-            },
         ],
     },
     {
