@@ -66,6 +66,68 @@ public class GetAllTemperaturesForDeviceTests(ApiFactory factory) : IAsyncLifeti
     }
 
     [Fact]
+    public async Task GetTemperatures_DeviceInDb_ReturnsOkAndLast7DaysOfTemperaturesInAscTimestampOrder()
+    {
+        // Arrange
+        var device = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
+        await factory.InsertAsync(device);
+
+        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
+        await factory.InsertAsync(degreesCelsiusUnit);
+
+        var today = DateTime.UtcNow;
+
+        var temperature1 = new Temperature()
+        {
+            DeviceId = device.Id,
+            Timestamp = today.AddDays(-8),
+            Value = 24.5,
+            UnitId = degreesCelsiusUnit.Id
+        };
+        var temperature2 = new Temperature()
+        {
+            DeviceId = device.Id,
+            Timestamp = today.AddDays(-7),
+            Value = 26.9,
+            UnitId = degreesCelsiusUnit.Id
+        };
+        var temperature3 = new Temperature()
+        {
+            DeviceId = device.Id,
+            Timestamp = today.AddDays(-6),
+            Value = 27.1,
+            UnitId = degreesCelsiusUnit.Id
+        };
+        await factory.InsertAsync(temperature1, temperature2, temperature3);
+
+        // Act
+        var response = await _httpClient.GetAsync($"devices/{device.Id}/temperatures?days=7");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var temperatures = await response.Content.ReadFromJsonAsync<List<ApiTemperatureDto>>();
+        temperatures.Should().HaveCount(2).And.Equal(
+            [
+                new ApiTemperatureDto
+                {
+                    Id = temperature2.Id,
+                    DeviceId = device.Id,
+                    Timestamp = temperature2.Timestamp,
+                    DegreesCelsius = temperature2.Value,
+                },
+                new ApiTemperatureDto
+                {
+                    Id = temperature3.Id,
+                    DeviceId = device.Id,
+                    Timestamp = temperature3.Timestamp,
+                    DegreesCelsius = temperature3.Value,
+                }
+            ]
+        );
+    }
+
+    [Fact]
     public async Task GetTemperatures_NoExistingDeviceId_ReturnsNotFound()
     {
         // Arrange

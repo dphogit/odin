@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Odin.Api.Config;
 using Odin.Api.Models;
 using Odin.Api.Services;
 using Odin.Shared.ApiDtos.Temperatures;
@@ -22,7 +23,8 @@ public static class DeviceTemperaturesEndpoints
     public static async Task<Results<Ok<IEnumerable<ApiTemperatureDto>>, NotFound>> GetAllDeviceTemperatures(
         ITemperatureService temperatureService,
         IDeviceService deviceService,
-        int deviceId
+        int deviceId,
+        int days = TemperatureConfig.DefaultLastDays
     )
     {
         var device = await deviceService.GetDeviceByIdAsync(deviceId);
@@ -30,7 +32,7 @@ public static class DeviceTemperaturesEndpoints
         if (device is null)
             return TypedResults.NotFound();
 
-        var temperatures = await temperatureService.GetTemperaturesForDeviceAsync(deviceId);
+        var temperatures = await temperatureService.GetTemperaturesForDeviceAsync(deviceId, days);
         var temperatureDtos = temperatures.Select(t => t.ToDto());
         return TypedResults.Ok(temperatureDtos);
     }

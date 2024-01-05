@@ -1,8 +1,9 @@
 import { Box, Grid, Sheet, Typography } from '@mui/joy';
 import { useGetDeviceDetailsQuery } from '../api';
+import { ApiTemperatureDto } from '../types';
 import DeviceDisplayInfoCard from './DeviceDisplayInfoCard';
 import DeviceTemperatureGraph, { DeviceTemperatureGraphDataPoint } from './DeviceTemperatureGraph';
-import { ApiTemperatureDto } from '../types';
+import TimeRangeDropdown from './TimeRangeDropdown';
 
 function transformToTemperatureGraphData(
     data: ApiTemperatureDto[]
@@ -14,9 +15,11 @@ function transformToTemperatureGraphData(
 }
 
 export default function DeviceDetailsPage() {
-    const { data: device } = useGetDeviceDetailsQuery();
+    const { data: response } = useGetDeviceDetailsQuery();
 
-    const deviceTemperatureGraphData = transformToTemperatureGraphData(device.temperatures ?? []);
+    const deviceTemperatureGraphData = transformToTemperatureGraphData(
+        response.device.temperatures ?? []
+    );
 
     return (
         <Box px="24px">
@@ -25,13 +28,21 @@ export default function DeviceDetailsPage() {
             </Typography>
             <Grid container spacing="24px" alignItems="stretch">
                 <Grid xs={12} xl={3}>
-                    <DeviceDisplayInfoCard device={device} />
+                    <DeviceDisplayInfoCard device={response.device} />
                 </Grid>
                 <Grid xs={12} xl={9}>
                     <Sheet variant="outlined" sx={{ borderRadius: '8px', p: '16px' }}>
-                        <Typography level="title-lg" mb="16px" textAlign="center">
-                            Temperatures Recorded
-                        </Typography>
+                        <Box
+                            mb="24px"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="space-between"
+                        >
+                            <Typography level="title-lg">
+                                Temperatures Recorded (Daily Average)
+                            </Typography>
+                            <TimeRangeDropdown defaultValue={response.days} />
+                        </Box>
                         <DeviceTemperatureGraph
                             data={deviceTemperatureGraphData}
                             containerHeight={600}
