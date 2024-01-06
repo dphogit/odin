@@ -10,8 +10,6 @@ import {
     YAxis,
 } from 'recharts';
 
-const DAILY_DEGREE_BUFFER = 4;
-
 export interface DeviceTemperatureGraphDataPoint {
     timestamp: Date;
     degreesCelsius: number;
@@ -19,29 +17,45 @@ export interface DeviceTemperatureGraphDataPoint {
 
 interface DataPoint {
     timestamp: string;
-    degreesCelsius: number;
+    degreesCelsius: number | null;
 }
 
 /**
- * Transforms the raw props data into ascending sorted daily averages for the graph to consume.
- * Specifically, the function groups datapoints by day, which it then averages for each day.
- * @returns An array of pairs in the form of `[day (DD MMM YY), average temp 1dp (°C)]`
+ * Obtains the daily pairs of (day, average temperature) for the last specified number of days.
+ * If there is no data for a day, the average temperature will be null.
  */
-function getDailyAverages(data: DeviceTemperatureGraphDataPoint[]): DataPoint[] {
-    const groupedByDay = data.reduce((accum, dataPoint) => {
-        const day = dayjs(dataPoint.timestamp).format('DD MMM YY');
-        if (!accum[day]) {
-            accum[day] = [];
+function getDailyAverages(data: DeviceTemperatureGraphDataPoint[], days: number): DataPoint[] {
+    function calculateAverage(temperatures: number[]) {
+        if (temperatures.length === 0) return null;
+        return temperatures.reduce((total, temp) => total + temp, 0) / temperatures.length;
+    }
+
+    function roundToTenth(num: number) {
+        return Math.round((num + Number.EPSILON) * 10) / 10;
+    }
+
+    const format = 'ddd DD MMMM YYYY';
+    const startDate = dayjs().subtract(days, 'day').startOf('day');
+    const endDate = dayjs().endOf('day');
+
+    const groupedByDay: Record<string, number[]> = {};
+
+    for (let date = startDate; date.isBefore(endDate); date = date.add(1, 'day')) {
+        groupedByDay[date.format(format)] = [];
+    }
+
+    data.forEach((dataPoint) => {
+        const day = dayjs(dataPoint.timestamp).format(format);
+        if (groupedByDay[day]) {
+            groupedByDay[day].push(dataPoint.degreesCelsius);
         }
-        accum[day].push(dataPoint.degreesCelsius);
-        return accum;
-    }, {} as Record<string, number[]>);
+    });
 
     const dailyAverages = Object.entries(groupedByDay).map(([day, temps]) => {
-        const avgTemp = temps.reduce((total, temp) => total + temp, 0) / temps.length;
+        const avgTemp = calculateAverage(temps);
         return {
             timestamp: day,
-            degreesCelsius: Math.round((avgTemp + Number.EPSILON) * 10) / 10,
+            degreesCelsius: avgTemp === null ? null : roundToTenth(avgTemp),
         };
     });
 
@@ -53,15 +67,17 @@ function getDailyAverages(data: DeviceTemperatureGraphDataPoint[]): DataPoint[] 
 interface DeviceTemperatureGraphProps {
     data: DeviceTemperatureGraphDataPoint[];
     containerHeight: number;
+    days: number;
     isLoading?: boolean;
 }
 
 export default function DeviceTemperatureGraph({
-    data,
     containerHeight,
+    data,
+    days,
     isLoading,
 }: DeviceTemperatureGraphProps) {
-    const dailyAverageData = getDailyAverages(data);
+    const dailyAverageData = getDailyAverages(data, days);
 
     return (
         <Box sx={{ width: '100%', height: containerHeight, pl: '4px', pb: '8px' }}>
@@ -87,8 +103,13 @@ export default function DeviceTemperatureGraph({
                         <XAxis
                             dataKey="timestamp"
                             tickFormatter={(timestamp) => dayjs(timestamp).format('DD MMM')}
-                            tick={{ dy: 12.5, fontSize: 14 }}
-                            height={65}
+                            tick={{
+                                dx: -5,
+                                dy: 30,
+                                fontSize: dailyAverageData.length <= 10 ? '14px' : '12px',
+                            }}
+                            angle={-90}
+                            height={100}
                             label={{
                                 value: 'Day',
                                 position: 'insideBottom',
@@ -104,14 +125,10 @@ export default function DeviceTemperatureGraph({
                                 angle: -90,
                                 offset: 15,
                             }}
-                            domain={[
-                                // Add buffer spacing around line as we use a relative range
-                                (dataMin: number) => Math.floor(dataMin - DAILY_DEGREE_BUFFER),
-                                (dataMax: number) => Math.ceil(dataMax + DAILY_DEGREE_BUFFER),
-                            ]}
                         />
                         <Tooltip formatter={(value) => [`${value} °C`, null]} />
                         <Line
+                            connectNulls
                             type="linear"
                             dataKey="degreesCelsius"
                             dot={{ r: 6 }}

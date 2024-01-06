@@ -24,7 +24,7 @@ export default function JoyUIProvider({ children }: JoyUIProviderProps) {
                 styles={{
                     ':root': {
                         '--Sidebar-width': '260px',
-                        '--Page-padding-top': '36px',
+                        '--Page-padding-top': '48px',
                     },
                 }}
             />

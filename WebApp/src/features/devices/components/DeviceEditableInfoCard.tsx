@@ -31,7 +31,7 @@ const initialFormChanges: IFormChanges = {
     description: false,
 };
 
-export default function DeviceDisplayInfoCard({ device }: DeviceInfoCardProps) {
+export default function DeviceEditableInfoCard({ device }: DeviceInfoCardProps) {
     const nameRef = useRef<HTMLInputElement | null>(null);
     const locationRef = useRef<HTMLInputElement | null>(null);
     const descriptionRef = useRef<HTMLTextAreaElement | null>(null);

@@ -1,7 +1,7 @@
 import { Box, Grid, Sheet, Typography } from '@mui/joy';
 import { useGetDeviceDetailsQuery } from '../api';
 import { ApiTemperatureDto } from '../api/types';
-import DeviceDisplayInfoCard from './DeviceDisplayInfoCard';
+import DeviceEditableInfoCard from './DeviceEditableInfoCard';
 import DeviceTemperatureGraph, { DeviceTemperatureGraphDataPoint } from './DeviceTemperatureGraph';
 import TimeRangeDropdown from './TimeRangeDropdown';
 import { useNavigation } from 'react-router-dom';
@@ -41,7 +41,7 @@ export default function DeviceDetailsPage() {
             </Typography>
             <Grid container spacing="24px" alignItems="stretch">
                 <Grid xs={12} xl={3}>
-                    <DeviceDisplayInfoCard device={response.device} />
+                    <DeviceEditableInfoCard device={response.device} />
                 </Grid>
                 <Grid xs={12} xl={9}>
                     <Sheet variant="outlined" sx={{ borderRadius: '8px', p: '16px' }}>
@@ -66,6 +66,7 @@ export default function DeviceDetailsPage() {
                             data={deviceTemperatureGraphData}
                             containerHeight={600}
                             isLoading={isFetchingTemperatures}
+                            days={response.days}
                         />
                     </Sheet>
                 </Grid>

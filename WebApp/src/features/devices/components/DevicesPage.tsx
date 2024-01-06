@@ -14,7 +14,7 @@ export default function DevicesPage() {
                 </Typography>
                 <Button startDecorator={<AddIcon />}>Add Device</Button>
             </Box>
-            <Grid mt="24px" container spacing={1}>
+            <Grid mt="24px" container spacing={1} alignItems="stretch" gap="24px">
                 {devices.map((device) => (
                     <Grid key={device.id} xs={12} md={4}>
                         <DeviceCard device={device} />
