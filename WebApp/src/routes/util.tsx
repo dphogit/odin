@@ -4,6 +4,7 @@ export const PathNames = {
     DEVICES: 'devices',
     DEVICE_NEW: 'new',
     DEVICE_DETAILS: ':deviceId',
+    DEVICE_DELETE: 'delete',
 } as const;
 
 export interface LoaderFnArgsTypedParams<T extends keyof typeof PathNames>

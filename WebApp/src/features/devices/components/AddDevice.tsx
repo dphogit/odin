@@ -29,7 +29,6 @@ export default function AddDevice() {
                 Add Device
             </Button>
             <Modal
-                aria-labelledby="add-device-modal-title"
                 open={isOpen}
                 onClose={closeModal}
                 sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}

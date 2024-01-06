@@ -1,11 +1,12 @@
 import { Box, Grid, Sheet, Typography } from '@mui/joy';
+import { useNavigation } from 'react-router-dom';
 import { useGetDeviceDetailsQuery } from '../api';
 import { ApiTemperatureDto } from '../api/types';
+import { DAYS_SEARCH_PARAMS_KEY } from '../util';
 import DeviceEditableInfoCard from './DeviceEditableInfoCard';
+import DeviceOptionsMenu from './DeviceOptionsMenu';
 import DeviceTemperatureGraph, { DeviceTemperatureGraphDataPoint } from './DeviceTemperatureGraph';
 import TimeRangeDropdown from './TimeRangeDropdown';
-import { useNavigation } from 'react-router-dom';
-import { DAYS_SEARCH_PARAMS_KEY } from '../util';
 
 function transformToTemperatureGraphData(
     data: ApiTemperatureDto[]
@@ -36,9 +37,12 @@ export default function DeviceDetailsPage() {
 
     return (
         <Box px="24px">
-            <Typography level="h2" component="h1" mb="24px">
-                Device Details
-            </Typography>
+            <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb="24px">
+                <Typography level="h2" component="h1">
+                    Device Details
+                </Typography>
+                <DeviceOptionsMenu />
+            </Box>
             <Grid container spacing="24px" alignItems="stretch">
                 <Grid xs={12} xl={3}>
                     <DeviceEditableInfoCard device={response.device} />
