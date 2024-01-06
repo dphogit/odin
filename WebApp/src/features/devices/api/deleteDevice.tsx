@@ -15,7 +15,10 @@ export async function deleteDeviceAction({ params }: ActionFunctionArgs) {
     }
 
     await deleteDevice(deviceId);
-    reactQueryClient.invalidateQueries({ queryKey: ['devices'] });
+
+    // Make sure we EXACTLY invalidate the "devices" query, otherwise we will prompt a refetch
+    // of the device details page, which will cause an error since the device no longer exists.
+    reactQueryClient.invalidateQueries({ queryKey: ['devices'], exact: true });
 
     return redirect(`/${PathNames.DEVICES}`);
 }
