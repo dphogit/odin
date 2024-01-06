@@ -2,6 +2,7 @@ import { ActionFunctionArgs, ParamParseKey, Params } from 'react-router-dom';
 
 export const PathNames = {
     DEVICES: 'devices',
+    DEVICE_NEW: 'new',
     DEVICE_DETAILS: ':deviceId',
 } as const;
 

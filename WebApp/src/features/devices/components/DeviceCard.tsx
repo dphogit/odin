@@ -35,12 +35,12 @@ export default function DeviceCard({ device }: DeviceCardProps) {
                         </Link>
                     </Typography>
                     <Typography level="body-xs" fontWeight={700}>
-                        {device.location ?? <i>No Location Specified</i>}
+                        {device.location || <i>No Location Specified</i>}
                     </Typography>
                 </Box>
                 <Typography
                     level="body-sm"
-                    title={device.description ?? undefined}
+                    title={device.description || 'No Description'}
                     sx={{
                         mt: '12px',
                         display: '-webkit-box',
@@ -49,7 +49,7 @@ export default function DeviceCard({ device }: DeviceCardProps) {
                         overflow: 'hidden',
                     }}
                 >
-                    {device.description ?? <i>No Description</i>}
+                    {device.description || <i>No Description</i>}
                 </Typography>
             </CardContent>
         </Card>

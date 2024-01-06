@@ -1,7 +1,7 @@
-import { Box, Button, Grid, Typography } from '@mui/joy';
-import AddIcon from '@mui/icons-material/Add';
-import DeviceCard from './DeviceCard';
+import { Box, Grid, Typography } from '@mui/joy';
+import { AddDevice } from '.';
 import { useGetDevicesQuery } from '../api';
+import DeviceCard from './DeviceCard';
 
 export default function DevicesPage() {
     const { data: devices } = useGetDevicesQuery();
@@ -12,7 +12,7 @@ export default function DevicesPage() {
                 <Typography level="h2" component="h1">
                     Your Devices
                 </Typography>
-                <Button startDecorator={<AddIcon />}>Add Device</Button>
+                <AddDevice />
             </Box>
             <Grid mt="24px" container spacing={1} alignItems="stretch" gap="24px">
                 {devices.map((device) => (
