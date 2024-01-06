@@ -2,6 +2,8 @@
 
 A simple home electronics management system intended for personal and local use.
 
+![Demo](./demo.png)
+
 ## 📚 Motivation
 
 I've been getting into electronics and want to build some simple home devices. For example. measuring the temperature in my room with an Arduino and TMP36 sensor, or using a Raspberry Pi to send temperature/humidity data over WiFi. I want to be able to manage these devices and view/store this collected data.
@@ -99,7 +101,7 @@ Access the app at <http://localhost:3000>.
 dotnet test --filter FullyQualifiedName~Odin.Api.IntegrationTests
 ```
 
-Integration tests are using Xunit, testcontainers and respawn. At the start of the integration tests for an XUnit defined collection, a docker container is started with the same SQL Server 2022 image as the API is using then reset to a clean state at the end of each test.
+Integration tests for the API use Xunit, testcontainers and respawn. At the start of the integration tests for an XUnit defined collection, a docker container is started with the same SQL Server 2022 image as the API is using then reset to a clean state at the end of each test.
 
 ## Samples
 
