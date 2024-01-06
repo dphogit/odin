@@ -33,7 +33,7 @@ public class UpdateDeviceTests(ApiFactory factory) : IAsyncLifetime
         };
 
         // Act
-        var response = await _httpClient.PutAsJsonAsync($"devices/{device.Id}", updateDeviceDTO);
+        var response = await _httpClient.PatchAsJsonAsync($"devices/{device.Id}", updateDeviceDTO);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -56,7 +56,7 @@ public class UpdateDeviceTests(ApiFactory factory) : IAsyncLifetime
         };
 
         // Act
-        var response = await _httpClient.PutAsJsonAsync($"devices/{id}", updateDeviceDTO);
+        var response = await _httpClient.PatchAsJsonAsync($"devices/{id}", updateDeviceDTO);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

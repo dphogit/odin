@@ -10,7 +10,14 @@ var env = builder.Environment;
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder => builder.AllowAnyOrigin());
+    if (env.IsDevelopment())
+    {
+        options.AddDefaultPolicy(builder =>
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+        );
+    }
 });
 
 builder.Services.ConfigureHttpJsonOptions(options =>

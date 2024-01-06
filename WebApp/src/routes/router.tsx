@@ -5,6 +5,7 @@ import {
     DevicesPage,
     getDeviceDetailsLoader,
     getDevicesLoader,
+    editDeviceAction,
 } from 'features/devices';
 import { reactQueryClient } from 'providers/ReactQueryClientProvider';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
@@ -33,6 +34,7 @@ export const browserRouter = createBrowserRouter([
                         path: PathNames.DEVICE_DETAILS,
                         element: <DeviceDetailsPage />,
                         loader: getDeviceDetailsLoader(reactQueryClient),
+                        action: editDeviceAction,
                     },
                 ],
             },

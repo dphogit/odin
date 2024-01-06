@@ -13,7 +13,7 @@ public static class DeviceEndpoints
         builder.MapGet("/{deviceId}", GetDeviceById).WithName(nameof(GetDeviceById));
         builder.MapGet("/name/{name}", GetDeviceByName).WithName(nameof(GetDeviceByName));
         builder.MapPost("/", AddDevice).WithName(nameof(AddDevice));
-        builder.MapPut("/{deviceId}", UpdateDevice).WithName(nameof(UpdateDevice));
+        builder.MapPatch("/{deviceId}", UpdateDevice).WithName(nameof(UpdateDevice));
         builder.MapDelete("/{deviceId}", DeleteDevice).WithName(nameof(DeleteDevice));
 
         builder.MapGroup("/{deviceId}/temperatures").MapDeviceTemperatureEndpoints();

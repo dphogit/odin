@@ -3,7 +3,7 @@ import axiosInstance from 'lib/axios';
 import { useLoaderData } from 'react-router-dom';
 import { LoaderReturnType } from 'types';
 import { z } from 'zod';
-import { apiDeviceDtoSchema } from '../types';
+import { apiDeviceDtoSchema } from './types';
 
 const getDevicesResponseSchema = z.array(apiDeviceDtoSchema);
 type GetDevicesResponse = z.infer<typeof getDevicesResponseSchema>;

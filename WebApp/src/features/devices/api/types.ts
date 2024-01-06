@@ -16,5 +16,12 @@ export const apiDeviceDtoSchema = z.object({
     updatedAt: z.string().datetime({ offset: true }),
 });
 
+export const apiUpdateDeviceDtoSchema = z.object({
+    name: z.string().optional(),
+    description: z.string().optional(),
+    location: z.string().optional(),
+});
+
 export type ApiDeviceDto = z.infer<typeof apiDeviceDtoSchema>;
 export type ApiTemperatureDto = z.infer<typeof apiTemperatureDtoSchema>;
+export type ApiUpdateDeviceDto = z.infer<typeof apiUpdateDeviceDtoSchema>;

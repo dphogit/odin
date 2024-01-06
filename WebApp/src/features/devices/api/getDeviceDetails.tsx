@@ -9,7 +9,7 @@ import {
     ApiTemperatureDto,
     apiDeviceDtoSchema,
     apiTemperatureDtoSchema,
-} from '../types';
+} from './types';
 import { TimeRangeOptions, isDaysWithinDropdownOptions, getDaysFromUrlSearchParams } from '../util';
 
 async function getDeviceDetails(id: string): Promise<ApiDeviceDto> {
@@ -52,7 +52,7 @@ async function getDeviceDetailsWithTemperatures(
 }
 
 const getDeviceDetailsQuery = (id: string, days: number = TimeRangeOptions.LAST_30_DAYS) => ({
-    queryKey: ['devices', id, 'days', days],
+    queryKey: ['devices', id, { days }],
     queryFn: async () => getDeviceDetailsWithTemperatures(id, days),
 });
 

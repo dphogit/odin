@@ -1,6 +1,6 @@
 import { Box, Grid, Sheet, Typography } from '@mui/joy';
 import { useGetDeviceDetailsQuery } from '../api';
-import { ApiTemperatureDto } from '../types';
+import { ApiTemperatureDto } from '../api/types';
 import DeviceDisplayInfoCard from './DeviceDisplayInfoCard';
 import DeviceTemperatureGraph, { DeviceTemperatureGraphDataPoint } from './DeviceTemperatureGraph';
 import TimeRangeDropdown from './TimeRangeDropdown';
@@ -46,14 +46,20 @@ export default function DeviceDetailsPage() {
                 <Grid xs={12} xl={9}>
                     <Sheet variant="outlined" sx={{ borderRadius: '8px', p: '16px' }}>
                         <Box
-                            mb="24px"
+                            mb="32px"
                             display="flex"
-                            alignItems="center"
+                            alignItems="flex-start"
                             justifyContent="space-between"
                         >
-                            <Typography level="title-lg">
-                                Temperatures Recorded (Daily Average)
-                            </Typography>
+                            <Box>
+                                <Typography level="title-lg" mb="4px">
+                                    Recorded Temperatures
+                                </Typography>
+                                <Typography level="body-sm">
+                                    Daily average temperatures recorded within the selected time
+                                    range.
+                                </Typography>
+                            </Box>
                             <TimeRangeDropdown defaultValue={response.days} />
                         </Box>
                         <DeviceTemperatureGraph
