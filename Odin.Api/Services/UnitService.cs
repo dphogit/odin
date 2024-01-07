@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Odin.Api.Database;
 using Odin.Api.Models;
+using Odin.Api.Services.Exceptions;
 
 namespace Odin.Api.Services;
 
@@ -35,6 +36,11 @@ public class UnitService(AppDbContext dbContext) : IUnitService
 
     public async Task DeleteUnitAsync(Unit unit)
     {
+        var hasAssociatedMeasurements = await dbContext.Temperatures.AnyAsync(t => t.UnitId == unit.Id);
+
+        if (hasAssociatedMeasurements)
+            throw new UnitHasAssociatedMeasurementsException(unit);
+
         dbContext.Units.Remove(unit);
         await dbContext.SaveChangesAsync();
     }

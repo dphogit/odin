@@ -14,5 +14,10 @@ public interface IUnitService
 
     public Task UpdateUnitAsync(Unit unit);
 
+    /// <summary>
+    ///     Deletes a unit if it has no associated measurements, otherwise throws a
+    ///     <see cref="UnitHasAssociatedMeasurementsException"/>.
+    /// </summary>
+    /// <exception cref="UnitHasAssociatedMeasurementsException" />
     public Task DeleteUnitAsync(Unit unit);
 }

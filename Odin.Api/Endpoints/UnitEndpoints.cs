@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Odin.Api.Models;
 using Odin.Api.Services;
+using Odin.Api.Services.Exceptions;
 using Odin.Shared.ApiDtos.Units;
 
 namespace Odin.Api.Endpoints;
@@ -68,14 +69,21 @@ public static class UnitEndpoints
         return TypedResults.NoContent();
     }
 
-    public static async Task<Results<NotFound, NoContent>> DeleteUnit(IUnitService unitService, int id)
+    public static async Task<Results<NotFound, BadRequest, NoContent>> DeleteUnit(IUnitService unitService, int id)
     {
         var unit = await unitService.GetUnitByIdAsync(id);
 
         if (unit is null)
             return TypedResults.NotFound();
 
-        await unitService.DeleteUnitAsync(unit);
+        try
+        {
+            await unitService.DeleteUnitAsync(unit);
+        }
+        catch (UnitHasAssociatedMeasurementsException)
+        {
+            return TypedResults.BadRequest();
+        }
 
         return TypedResults.NoContent();
     }

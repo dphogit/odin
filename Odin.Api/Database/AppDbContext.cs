@@ -26,6 +26,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<Measurement>().UseTpcMappingStrategy();
+
+        builder.Entity<Measurement>()
+            .HasOne(m => m.Unit)
+            .WithMany()
+            .OnDelete(DeleteBehavior.Restrict);
+
         base.OnModelCreating(builder);
     }
 
