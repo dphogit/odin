@@ -1,4 +1,5 @@
 import DevicesIcon from '@mui/icons-material/Devices';
+import ThermostatIcon from '@mui/icons-material/Thermostat';
 import { Box, List, ListItem, ListItemButton, ListItemContent, Sheet, Typography } from '@mui/joy';
 import { Link, useLocation, useResolvedPath } from 'react-router-dom';
 import { PathNames } from 'routes/util';
@@ -42,6 +43,7 @@ function NavItems() {
             }}
         >
             <NavItem to={PathNames.DEVICES} icon={<DevicesIcon />} label="Devices" />
+            <NavItem to={PathNames.TEMPERATURES} icon={<ThermostatIcon />} label="Temperatures" />
         </List>
     );
 }

@@ -12,6 +12,7 @@ import {
 import { reactQueryClient } from 'providers/ReactQueryClientProvider';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { PathNames } from './util';
+import { ManageTemperaturesPage } from 'features/temperatures';
 
 export const browserRouter = createBrowserRouter([
     {
@@ -44,6 +45,11 @@ export const browserRouter = createBrowserRouter([
                         action: deleteDeviceAction,
                     },
                 ],
+            },
+            {
+                errorElement: <ErrorPage />,
+                path: PathNames.TEMPERATURES,
+                element: <ManageTemperaturesPage />,
             },
         ],
     },
