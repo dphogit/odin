@@ -6,6 +6,8 @@ export const PathNames = {
     DEVICE_DETAILS: ':deviceId',
     DEVICE_DELETE: 'delete',
     TEMPERATURES: 'temperatures',
+    TEMPERATURE_DETAILS: ':temperatureId',
+    TEMPERATURE_DELETE: 'delete',
 } as const;
 
 export interface LoaderFnArgsTypedParams<T extends keyof typeof PathNames>

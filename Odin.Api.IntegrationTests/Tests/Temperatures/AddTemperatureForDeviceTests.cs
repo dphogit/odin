@@ -45,7 +45,7 @@ public class AddTemperatureForDeviceTests(ApiFactory factory) : IAsyncLifetime
         temperatureDto.Should().BeOfType<ApiTemperatureDto>().Which.Id.Should().BeOfType(typeof(int));
         temperatureDto.Should().BeEquivalentTo(addTemperatureDto);
         response.Headers.Location.Should().BeOfType<Uri>()
-            .Which.AbsolutePath.Should().Be($"/devices/{device.Id}/temperatures/{temperatureDto!.Id}");
+            .Which.AbsolutePath.Should().Be($"/temperatures/{temperatureDto!.Id}");
     }
 
     [Fact]
