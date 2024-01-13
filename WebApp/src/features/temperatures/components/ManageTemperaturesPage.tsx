@@ -1,7 +1,11 @@
 import { Box, Button, Typography } from '@mui/joy';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import TemperaturesTable from './TemperaturesTable';
+import { useGetTemperaturesWithDeviceQuery } from '../api';
 
 export default function ManageTemperaturesPage() {
+    const { data: temperatures } = useGetTemperaturesWithDeviceQuery();
+
     return (
         <Box maxWidth="1536px" px="24px" mx="auto">
             <Box display="flex" justifyContent="space-between" alignItems="flex-start">
@@ -16,6 +20,9 @@ export default function ManageTemperaturesPage() {
                 >
                     Download (Coming Soon)
                 </Button>
+            </Box>
+            <Box mt="24px">
+                <TemperaturesTable temperatures={temperatures} />
             </Box>
         </Box>
     );
