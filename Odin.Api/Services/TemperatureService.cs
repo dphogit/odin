@@ -14,12 +14,14 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
 
     public async Task<IEnumerable<Temperature>> GetTemperaturesAsync(bool withDevice)
     {
-        if (withDevice)
-            return await dbContext.Temperatures
-                .Include(t => t.Device)
-                .ToListAsync();
+        var query = dbContext.Temperatures.AsQueryable();
 
-        return await dbContext.Temperatures.ToListAsync();
+        if (withDevice)
+        {
+            query = query.Include(t => t.Device);
+        }
+
+        return await query.OrderByDescending(t => t.Timestamp).ToListAsync();
     }
 
     public async Task<Temperature?> GetTemperatureByIdAsync(int id)

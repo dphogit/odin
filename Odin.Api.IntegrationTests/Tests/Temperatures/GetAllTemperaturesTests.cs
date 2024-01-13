@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using FluentAssertions;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
+using Odin.Shared.ApiDtos.Devices;
 using Odin.Shared.ApiDtos.Temperatures;
 using Xunit;
 
@@ -19,7 +20,7 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
     public async Task DisposeAsync() => await _resetDatabase();
 
     [Fact]
-    public async Task GetTemperatures_NoQueryParams_ReturnsOkAndTemperatures()
+    public async Task GetTemperatures_NoQueryParams_ReturnsOkAndTemperaturesInTimestampDesc()
     {
         // Arrange
         var device1 = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
@@ -32,7 +33,7 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var temperature1 = new Temperature()
         {
             DeviceId = device1.Id,
-            Timestamp = DateTime.UtcNow,
+            Timestamp = DateTime.UtcNow.AddDays(-1),
             Value = 24.5,
             UnitId = degreesCelsiusUnit.Id
         };
@@ -52,20 +53,26 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var temperatures = await response.Content.ReadFromJsonAsync<List<ApiTemperatureDto>>();
-        temperatures.Should().HaveCount(2).And.Satisfy(
-            dto => dto.Id == temperature1.Id
-                && dto.DeviceId == device1.Id
-                && dto.Timestamp == temperature1.Timestamp
-                && dto.DegreesCelsius == temperature1.Value,
-            dto => dto.Id == temperature2.Id
-                && dto.DeviceId == device2.Id
-                && dto.Timestamp == temperature2.Timestamp
-                && dto.DegreesCelsius == temperature2.Value
+        temperatures.Should().HaveCount(2).And.SatisfyRespectively(
+            latestDto =>
+            {
+                latestDto.Id.Should().Be(temperature2.Id);
+                latestDto.DeviceId.Should().Be(device2.Id);
+                latestDto.Timestamp.Should().Be(temperature2.Timestamp);
+                latestDto.DegreesCelsius.Should().Be(temperature2.Value);
+            },
+            earliestDto =>
+            {
+                earliestDto.Id.Should().Be(temperature1.Id);
+                earliestDto.DeviceId.Should().Be(device1.Id);
+                earliestDto.Timestamp.Should().Be(temperature1.Timestamp);
+                earliestDto.DegreesCelsius.Should().Be(temperature1.Value);
+            }
         );
     }
 
     [Fact]
-    public async Task GetTemperatures_WithDevicesQueryParams_ReturnsOkAndTemperaturesWithJoinedDevice()
+    public async Task GetTemperatures_WithDevicesQueryParams_ReturnsOkAndTemperaturesWithDeviceInTimestampDesc()
     {
         // Arrange
         var device1 = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
@@ -78,7 +85,7 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var temperature1 = new Temperature()
         {
             DeviceId = device1.Id,
-            Timestamp = DateTime.UtcNow,
+            Timestamp = DateTime.UtcNow.AddDays(-1),
             Value = 24.5,
             UnitId = degreesCelsiusUnit.Id
         };
@@ -98,21 +105,27 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var temperatures = await response.Content.ReadFromJsonAsync<List<ApiTemperatureDto>>();
-        temperatures.Should().HaveCount(2).And.Satisfy(
-            dto => dto.Id == temperature1.Id
-                && dto.DeviceId == device1.Id
-                && dto.Timestamp == temperature1.Timestamp
-                && dto.DegreesCelsius == temperature1.Value
-                && dto.Device != null
-                && dto.Device.Id == device1.Id
-                && dto.Device.Name == device1.Name,
-            dto => dto.Id == temperature2.Id
-                && dto.DeviceId == device2.Id
-                && dto.Timestamp == temperature2.Timestamp
-                && dto.DegreesCelsius == temperature2.Value
-                && dto.Device != null
-                && dto.Device.Id == device2.Id
-                && dto.Device.Name == device2.Name
+        temperatures.Should().HaveCount(2).And.SatisfyRespectively(
+            latestDto =>
+            {
+                latestDto.Id.Should().Be(temperature2.Id);
+                latestDto.DeviceId.Should().Be(device2.Id);
+                latestDto.Timestamp.Should().Be(temperature2.Timestamp);
+                latestDto.DegreesCelsius.Should().Be(temperature2.Value);
+                var deviceAssertion = latestDto.Device.Should().BeOfType<ApiDeviceDto>();
+                deviceAssertion.Which.Id.Should().Be(device2.Id);
+                deviceAssertion.Which.Name.Should().Be(device2.Name);
+            },
+            earliestDto =>
+            {
+                earliestDto.Id.Should().Be(temperature1.Id);
+                earliestDto.DeviceId.Should().Be(device1.Id);
+                earliestDto.Timestamp.Should().Be(temperature1.Timestamp);
+                earliestDto.DegreesCelsius.Should().Be(temperature1.Value);
+                var deviceAssertion = earliestDto.Device.Should().BeOfType<ApiDeviceDto>();
+                deviceAssertion.Which.Id.Should().Be(device1.Id);
+                deviceAssertion.Which.Name.Should().Be(device1.Name);
+            }
         );
     }
 }
