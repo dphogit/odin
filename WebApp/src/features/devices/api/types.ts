@@ -29,6 +29,5 @@ export const apiUpdateDeviceDtoSchema = z.object({
 });
 
 export type ApiDeviceDto = z.infer<typeof apiDeviceDtoSchema>;
-export type ApiTemperatureDto = z.infer<typeof apiTemperatureDtoSchema>;
 export type ApiCreateDeviceDto = z.infer<typeof apiCreateDeviceDtoSchema>;
 export type ApiUpdateDeviceDto = z.infer<typeof apiUpdateDeviceDtoSchema>;

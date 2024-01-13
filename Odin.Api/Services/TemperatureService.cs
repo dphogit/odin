@@ -7,6 +7,23 @@ namespace Odin.Api.Services;
 
 public class TemperatureService(AppDbContext dbContext) : ITemperatureService
 {
+    public async Task<IEnumerable<Temperature>> GetTemperaturesAsync()
+    {
+        return await GetTemperaturesAsync(false);
+    }
+
+    public async Task<IEnumerable<Temperature>> GetTemperaturesAsync(bool withDevice)
+    {
+        var query = dbContext.Temperatures.AsQueryable();
+
+        if (withDevice)
+        {
+            query = query.Include(t => t.Device);
+        }
+
+        return await query.OrderByDescending(t => t.Timestamp).ToListAsync();
+    }
+
     public async Task<Temperature?> GetTemperatureByIdAsync(int id)
     {
         return await dbContext.Temperatures.FindAsync(id);

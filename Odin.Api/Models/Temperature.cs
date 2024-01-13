@@ -1,3 +1,4 @@
+using Odin.Shared.ApiDtos.Devices;
 using Odin.Shared.ApiDtos.Temperatures;
 
 namespace Odin.Api.Models;
@@ -17,7 +18,7 @@ public class Temperature : Measurement
 
 public static class TemperatureExtensions
 {
-    public static ApiTemperatureDto ToDto(this Temperature temperature)
+    public static ApiTemperatureDto ToDto(this Temperature temperature, ApiDeviceDto? device = null)
     {
         return new()
         {
@@ -25,6 +26,7 @@ public static class TemperatureExtensions
             DeviceId = temperature.DeviceId,
             Timestamp = temperature.Timestamp,
             DegreesCelsius = temperature.Value,
+            Device = device,
         };
     }
 }

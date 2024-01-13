@@ -1,7 +1,7 @@
 import { Box, Grid, Sheet, Typography } from '@mui/joy';
 import { useNavigation } from 'react-router-dom';
 import { useGetDeviceDetailsQuery } from '../api';
-import { ApiTemperatureDto } from '../api/types';
+import { ApiTemperatureDto } from '../../temperatures';
 import { DAYS_SEARCH_PARAMS_KEY } from '../util';
 import DeviceEditableInfoCard from './DeviceEditableInfoCard';
 import DeviceOptionsMenu from './DeviceOptionsMenu';

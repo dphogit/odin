@@ -12,6 +12,8 @@ import {
 import { reactQueryClient } from 'providers/ReactQueryClientProvider';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { PathNames } from './util';
+import { ManageTemperaturesPage, getTemperaturesWithDeviceLoader } from 'features/temperatures';
+import { deleteTemperatureAction } from 'features/temperatures/api/deleteTemperature';
 
 export const browserRouter = createBrowserRouter([
     {
@@ -42,6 +44,21 @@ export const browserRouter = createBrowserRouter([
                     {
                         path: `${PathNames.DEVICE_DETAILS}/${PathNames.DEVICE_DELETE}`,
                         action: deleteDeviceAction,
+                    },
+                ],
+            },
+            {
+                errorElement: <ErrorPage />,
+                path: PathNames.TEMPERATURES,
+                children: [
+                    {
+                        index: true,
+                        element: <ManageTemperaturesPage />,
+                        loader: getTemperaturesWithDeviceLoader(reactQueryClient),
+                    },
+                    {
+                        path: `${PathNames.TEMPERATURE_DETAILS}/${PathNames.TEMPERATURE_DELETE}`,
+                        action: deleteTemperatureAction,
                     },
                 ],
             },
