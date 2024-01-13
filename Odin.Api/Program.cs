@@ -50,6 +50,7 @@ app.MapGet("/", () => "Hello World!");
 
 app.MapGroup("/devices").MapDeviceEndpoints();
 app.MapGroup("/units").MapUnitEndpoints();
+app.MapGroup("/temperatures").MapTemperatureEndpoints();
 
 app.Run();
 
