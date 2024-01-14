@@ -1,37 +1,20 @@
-import { Box, Sheet, Table, Typography } from '@mui/joy';
+import { Box, Divider, Sheet, Table } from '@mui/joy';
 import { ApiTemperatureWithDeviceDto } from '../api';
 import dayjs from 'dayjs';
+import DataCell from './DataCell';
 import TemperaturesTableRowMenu from './TemperaturesTableRowMenu';
+import TablePagination from './TablePagination';
 
 function formatTimestamp(timestamp: string) {
     return dayjs(timestamp).format('MMM DD, YYYY hh:mm:ss a');
 }
 
-interface DataCellProps {
-    children: React.ReactNode;
-    numericFormatting?: boolean;
-}
-
-function DataCell({ children, numericFormatting }: DataCellProps) {
-    return (
-        <td>
-            <Typography
-                level="body-sm"
-                sx={{
-                    fontVariantNumeric: numericFormatting ? 'tabular-nums' : undefined,
-                }}
-            >
-                {children}
-            </Typography>
-        </td>
-    );
-}
-
 interface TemperaturesTableProps {
     temperatures: ApiTemperatureWithDeviceDto[];
+    count: number;
 }
 
-export default function TemperaturesTable({ temperatures }: TemperaturesTableProps) {
+export default function TemperaturesTable({ temperatures, count }: TemperaturesTableProps) {
     return (
         <Sheet variant="outlined" sx={{ borderRadius: 'sm' }}>
             <Table aria-label="Temperatures Table" noWrap size="lg">
@@ -60,6 +43,9 @@ export default function TemperaturesTable({ temperatures }: TemperaturesTablePro
                     ))}
                 </tbody>
             </Table>
+            <Divider />
+            {/* TODO Once BE completed, will know what we need. */}
+            <TablePagination count={count} page={1} />
         </Sheet>
     );
 }

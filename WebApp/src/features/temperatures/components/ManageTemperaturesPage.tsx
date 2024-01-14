@@ -21,8 +21,11 @@ export default function ManageTemperaturesPage() {
                     Download (Coming Soon)
                 </Button>
             </Box>
-            <Box mt="24px">
-                <TemperaturesTable temperatures={temperatures} />
+            <Box my="24px">
+                <TemperaturesTable
+                    temperatures={temperatures.slice(0, 10)}
+                    count={temperatures.length}
+                />
             </Box>
         </Box>
     );
