@@ -5,9 +5,12 @@ namespace Odin.Api.Services;
 
 public interface ITemperatureService
 {
-    public Task<IEnumerable<Temperature>> GetTemperaturesAsync();
+    public Task<int> CountTotalTemperaturesAsync();
 
-    public Task<IEnumerable<Temperature>> GetTemperaturesAsync(bool withDevice);
+    public Task<IEnumerable<Temperature>> GetTemperaturesAsync(
+        bool withDevice = false,
+        int page = 1,
+        int limit = TemperatureConfig.DefaultPaginationLimit);
 
     public Task<Temperature?> GetTemperatureByIdAsync(int id);
 

@@ -14,7 +14,7 @@ public class Device : CreatedAtAndUpdatedAtEntity
 
     public string? Location { get; set; } = null;
 
-    public ICollection<Measurement> Measurements { get; } = new List<Measurement>();
+    public ICollection<Measurement> Measurements { get; } = [];
 
     public static Device FromDto(ApiCreateDeviceDto dto)
     {
