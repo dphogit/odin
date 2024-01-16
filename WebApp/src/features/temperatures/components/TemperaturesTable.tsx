@@ -13,15 +13,48 @@ function formatTimestamp(timestamp: string) {
 
 interface TemperaturesTableProps {
     temperatures: ApiTemperatureWithDeviceDto[];
-    total: number;
+    totalRecords: number;
     page: number;
+    rowsPerPage: number;
 }
 
-export default function TemperaturesTable({ temperatures, total, page }: TemperaturesTableProps) {
+export default function TemperaturesTable({
+    temperatures,
+    totalRecords,
+    page,
+    rowsPerPage,
+}: TemperaturesTableProps) {
     const [, setSearchParams] = useSearchParams();
+
+    const lastPage = Math.ceil(totalRecords / temperatures.length);
 
     const handleRowsPerPageChange = (_: React.SyntheticEvent | null, newValue: string) => {
         setSearchParams({ page: DEFAULT_PAGE.toString(), limit: newValue }, { replace: true });
+    };
+
+    const changePage = (newPage: number) => {
+        setSearchParams(
+            { page: newPage.toString(), limit: rowsPerPage.toString() },
+            { replace: true }
+        );
+    };
+
+    const handleFirstPageClick = () => {
+        changePage(1);
+    };
+
+    const handlePrevPageClick = () => {
+        if (page <= 1) return;
+        changePage(page - 1);
+    };
+
+    const handleNextPageClick = () => {
+        if (page >= lastPage) return;
+        changePage(page + 1);
+    };
+
+    const handleLastPageClick = () => {
+        changePage(lastPage);
     };
 
     return (
@@ -54,8 +87,12 @@ export default function TemperaturesTable({ temperatures, total, page }: Tempera
             </Table>
             <Divider />
             <TablePagination
-                total={total}
+                totalRecords={totalRecords}
                 page={page}
+                firstPageButtonOptions={{ onClick: handleFirstPageClick, show: true }}
+                prevPageButtonOptions={{ onClick: handlePrevPageClick }}
+                nextPageButtonOptions={{ onClick: handleNextPageClick }}
+                lastPageButtonOptions={{ onClick: handleLastPageClick, show: true }}
                 onRowsPerPageChange={handleRowsPerPageChange}
             />
         </Sheet>

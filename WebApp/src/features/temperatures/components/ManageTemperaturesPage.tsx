@@ -24,8 +24,9 @@ export default function ManageTemperaturesPage() {
             <Box my="24px">
                 <TemperaturesTable
                     temperatures={response.data}
-                    total={response._meta.total}
+                    totalRecords={response._meta.total}
                     page={response._meta.page}
+                    rowsPerPage={response._meta.limit}
                 />
             </Box>
         </Box>

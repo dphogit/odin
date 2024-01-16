@@ -6,15 +6,31 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import { DEFAULT_PAGE_LIMIT, DEFAULT_ROWS_PER_PAGE_OPTIONS } from '../util';
 
+export interface PageButtonOptions {
+    onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+}
+
+export interface SkipPageButtonOptions extends PageButtonOptions {
+    show?: boolean;
+}
+
 interface TablePaginationProps {
-    total: number;
+    totalRecords: number;
     page: number;
+    firstPageButtonOptions?: SkipPageButtonOptions;
+    prevPageButtonOptions?: PageButtonOptions;
+    nextPageButtonOptions?: PageButtonOptions;
+    lastPageButtonOptions?: SkipPageButtonOptions;
     onRowsPerPageChange?: (e: React.SyntheticEvent | null, newValue: string) => void;
 }
 
 export default function TablePagination({
-    total,
+    totalRecords,
     page,
+    firstPageButtonOptions,
+    prevPageButtonOptions,
+    nextPageButtonOptions,
+    lastPageButtonOptions,
     onRowsPerPageChange,
 }: TablePaginationProps) {
     const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_LIMIT);
@@ -34,10 +50,10 @@ export default function TablePagination({
     };
 
     const start = (page - 1) * rowsPerPage + 1;
-    const end = Math.min(page * rowsPerPage, total);
+    const end = Math.min(page * rowsPerPage, totalRecords);
     const isFirstPage = start === 1;
-    const isLastPage = end === total;
-    const currentRange = `${start}-${end} of ${total}`;
+    const isLastPage = end === totalRecords;
+    const currentRange = `${start}-${end} of ${totalRecords}`;
 
     return (
         <Box
@@ -66,18 +82,38 @@ export default function TablePagination({
             </Box>
             <Typography level="body-sm">{currentRange}</Typography>
             <Box display="flex" sx={{ [`& .${iconButtonClasses.root}`]: { borderRadius: '50%' } }}>
-                <IconButton aria-label="First Page" disabled={isFirstPage}>
-                    <FirstPageIcon />
-                </IconButton>
-                <IconButton aria-label="Previous Page" disabled={isFirstPage}>
+                {firstPageButtonOptions?.show && (
+                    <IconButton
+                        aria-label="First Page"
+                        disabled={isFirstPage}
+                        onClick={firstPageButtonOptions?.onClick}
+                    >
+                        <FirstPageIcon />
+                    </IconButton>
+                )}
+                <IconButton
+                    aria-label="Previous Page"
+                    disabled={isFirstPage}
+                    onClick={prevPageButtonOptions?.onClick}
+                >
                     <ChevronLeftIcon />
                 </IconButton>
-                <IconButton aria-label="Next Page" disabled={isLastPage}>
+                <IconButton
+                    aria-label="Next Page"
+                    disabled={isLastPage}
+                    onClick={nextPageButtonOptions?.onClick}
+                >
                     <ChevronRightIcon />
                 </IconButton>
-                <IconButton aria-label="Last Page" disabled={isLastPage}>
-                    <LastPageIcon />
-                </IconButton>
+                {lastPageButtonOptions?.show && (
+                    <IconButton
+                        aria-label="Last Page"
+                        disabled={isLastPage}
+                        onClick={lastPageButtonOptions?.onClick}
+                    >
+                        <LastPageIcon />
+                    </IconButton>
+                )}
             </Box>
         </Box>
     );
