@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 import DataCell from './DataCell';
 import TemperaturesTableRowMenu from './TemperaturesTableRowMenu';
 import TablePagination from './TablePagination';
+import { useSearchParams } from 'react-router-dom';
+import { DEFAULT_PAGE } from '..';
 
 function formatTimestamp(timestamp: string) {
     return dayjs(timestamp).format('MMM DD, YYYY hh:mm:ss a');
@@ -11,13 +13,20 @@ function formatTimestamp(timestamp: string) {
 
 interface TemperaturesTableProps {
     temperatures: ApiTemperatureWithDeviceDto[];
-    count: number;
+    total: number;
+    page: number;
 }
 
-export default function TemperaturesTable({ temperatures, count }: TemperaturesTableProps) {
+export default function TemperaturesTable({ temperatures, total, page }: TemperaturesTableProps) {
+    const [, setSearchParams] = useSearchParams();
+
+    const handleRowsPerPageChange = (_: React.SyntheticEvent | null, newValue: string) => {
+        setSearchParams({ page: DEFAULT_PAGE.toString(), limit: newValue }, { replace: true });
+    };
+
     return (
         <Sheet variant="outlined" sx={{ borderRadius: 'sm' }}>
-            <Table aria-label="Temperatures Table" noWrap size="lg">
+            <Table aria-label="Temperatures Table" noWrap>
                 <thead>
                     <tr>
                         <th style={{ width: '300px' }}>Timestamp</th>
@@ -44,8 +53,11 @@ export default function TemperaturesTable({ temperatures, count }: TemperaturesT
                 </tbody>
             </Table>
             <Divider />
-            {/* TODO Once BE completed, will know what we need. */}
-            <TablePagination count={count} page={1} />
+            <TablePagination
+                total={total}
+                page={page}
+                onRowsPerPageChange={handleRowsPerPageChange}
+            />
         </Sheet>
     );
 }

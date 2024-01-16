@@ -2,14 +2,10 @@ import { QueryClient, useQuery } from '@tanstack/react-query';
 import axiosInstance from 'lib/axios';
 import { useLoaderData, useParams, useSearchParams } from 'react-router-dom';
 import { LoaderFnArgsTypedParams } from 'routes/util';
+import { ApiTemperatureDto } from 'features/temperatures';
 import { LoaderReturnType } from 'types';
 import { z } from 'zod';
-import {
-    ApiDeviceDto,
-    ApiTemperatureDto,
-    apiDeviceDtoSchema,
-    apiTemperatureDtoSchema,
-} from './types';
+import { ApiDeviceDto, apiDeviceDtoSchema, apiTemperatureDtoSchema } from './types';
 import { TimeRangeOptions, isDaysWithinDropdownOptions, getDaysFromUrlSearchParams } from '../util';
 
 async function getDeviceDetails(id: string): Promise<ApiDeviceDto> {

@@ -9,7 +9,7 @@ export default function DataCell({ children, numericFormatting }: DataCellProps)
     return (
         <td>
             <Typography
-                level="body-sm"
+                level="body-xs"
                 sx={{
                     fontVariantNumeric: numericFormatting ? 'tabular-nums' : undefined,
                 }}

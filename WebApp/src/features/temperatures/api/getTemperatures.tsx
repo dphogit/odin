@@ -1,35 +1,43 @@
 import axiosInstance from 'lib/axios';
-import { apiTemperatureWithDeviceDtoSchema } from './types';
-import { z } from 'zod';
-import { useLoaderData } from 'react-router-dom';
-import { QueryClient, useQuery } from '@tanstack/react-query';
 import { LoaderReturnType } from 'types';
+import { GetTemperaturesResponse, getTemperaturesResponseSchema } from './types';
+import { LoaderFunctionArgs, useLoaderData, useSearchParams } from 'react-router-dom';
+import { QueryClient, useQuery } from '@tanstack/react-query';
+import { DEFAULT_PAGE, DEFAULT_PAGE_LIMIT, getPageAndLimitFromUrlSearchParams } from '../util';
 
-const getTemperaturesResponseSchema = z.array(apiTemperatureWithDeviceDtoSchema);
-type GetTemperaturesResponse = z.infer<typeof getTemperaturesResponseSchema>;
-
-async function getTemperaturesWithDevice(): Promise<GetTemperaturesResponse> {
-    const response = await axiosInstance.get('/temperatures?withDevice=true');
+async function getTemperaturesWithDevice(
+    page = DEFAULT_PAGE,
+    limit = DEFAULT_PAGE_LIMIT
+): Promise<GetTemperaturesResponse> {
+    const endpoint = `/temperatures?withDevice=true&page=${page}&limit=${limit}`;
+    const response = await axiosInstance.get(endpoint);
     return getTemperaturesResponseSchema.parse(response.data);
 }
 
-const getTemperatureWithDeviceQuery = {
-    queryKey: ['temperatures', { withDevice: true }],
-    queryFn: getTemperaturesWithDevice,
-};
+const getTemperatureWithDeviceQuery = (page = DEFAULT_PAGE, limit = DEFAULT_PAGE_LIMIT) => ({
+    queryKey: ['temperatures', { withDevice: true, page, limit }],
+    queryFn: () => getTemperaturesWithDevice(page, limit),
+});
 
 export function getTemperaturesWithDeviceLoader(queryClient: QueryClient) {
-    return async () => {
-        return queryClient.ensureQueryData(getTemperatureWithDeviceQuery);
+    return async ({ request }: LoaderFunctionArgs) => {
+        const urlSearchParams = new URL(request.url).searchParams;
+        const { page, limit } = getPageAndLimitFromUrlSearchParams(urlSearchParams);
+        const temperatureWithDeviceQuery = getTemperatureWithDeviceQuery(page, limit);
+        return queryClient.ensureQueryData(temperatureWithDeviceQuery);
     };
 }
 
 type GetTemperaturesLoaderReturnType = LoaderReturnType<typeof getTemperaturesWithDeviceLoader>;
 
 export function useGetTemperaturesWithDeviceQuery() {
+    const [searchParams] = useSearchParams();
     const initialData = useLoaderData() as GetTemperaturesLoaderReturnType;
+
+    const { page, limit } = getPageAndLimitFromUrlSearchParams(searchParams);
+
     return useQuery({
-        ...getTemperatureWithDeviceQuery,
+        ...getTemperatureWithDeviceQuery(page, limit),
         initialData,
     });
 }

@@ -4,21 +4,20 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import LastPageIcon from '@mui/icons-material/LastPage';
-
-const DEFAULT_ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
+import { DEFAULT_PAGE_LIMIT, DEFAULT_ROWS_PER_PAGE_OPTIONS } from '../util';
 
 interface TablePaginationProps {
-    count: number;
+    total: number;
     page: number;
-    onRowsPerPageChange?: (e: React.SyntheticEvent | null, newValue: string | null) => void;
+    onRowsPerPageChange?: (e: React.SyntheticEvent | null, newValue: string) => void;
 }
 
 export default function TablePagination({
-    count,
+    total,
     page,
     onRowsPerPageChange,
 }: TablePaginationProps) {
-    const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE_OPTIONS[0]);
+    const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_LIMIT);
 
     const handleRowsPerPageChange = (e: React.SyntheticEvent | null, newValue: string | null) => {
         if (!newValue) return;
@@ -35,10 +34,10 @@ export default function TablePagination({
     };
 
     const start = (page - 1) * rowsPerPage + 1;
-    const end = Math.min(page * rowsPerPage, count);
+    const end = Math.min(page * rowsPerPage, total);
     const isFirstPage = start === 1;
-    const isLastPage = end === count;
-    const currentRange = `${start}-${end} of ${count}`;
+    const isLastPage = end === total;
+    const currentRange = `${start}-${end} of ${total}`;
 
     return (
         <Box
@@ -53,7 +52,7 @@ export default function TablePagination({
                 <Typography level="body-sm">Rows per page:</Typography>
 
                 <Select
-                    defaultValue={DEFAULT_ROWS_PER_PAGE_OPTIONS[0].toString()}
+                    defaultValue={DEFAULT_PAGE_LIMIT.toString()}
                     size="sm"
                     variant="outlined"
                     onChange={handleRowsPerPageChange}

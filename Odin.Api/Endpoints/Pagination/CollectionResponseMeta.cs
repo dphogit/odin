@@ -1,6 +1,6 @@
 namespace Odin.Api.Endpoints.Pagination;
 
-public record ResponseMeta
+public record CollectionResponseMeta
 {
     /// <summary>
     ///     The current page for this collection request.

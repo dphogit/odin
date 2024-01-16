@@ -4,7 +4,7 @@ import TemperaturesTable from './TemperaturesTable';
 import { useGetTemperaturesWithDeviceQuery } from '../api';
 
 export default function ManageTemperaturesPage() {
-    const { data: temperatures } = useGetTemperaturesWithDeviceQuery();
+    const { data: response } = useGetTemperaturesWithDeviceQuery();
 
     return (
         <Box maxWidth="1536px" px="24px" mx="auto">
@@ -23,8 +23,9 @@ export default function ManageTemperaturesPage() {
             </Box>
             <Box my="24px">
                 <TemperaturesTable
-                    temperatures={temperatures.slice(0, 10)}
-                    count={temperatures.length}
+                    temperatures={response.data}
+                    total={response._meta.total}
+                    page={response._meta.page}
                 />
             </Box>
         </Box>

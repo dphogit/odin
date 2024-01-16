@@ -47,7 +47,7 @@ public static class TemperatureEndpoints
 
         var temperatureDtos = temperatures.Select(t => t.ToDto(t.Device?.ToDto()));
 
-        var responseMetaData = new ResponseMeta
+        var responseMetaData = new CollectionResponseMeta
         {
             Page = page,
             Limit = limit,
