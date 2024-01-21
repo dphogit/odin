@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Odin.Api.Config;
 using Odin.Api.Database;
+using Odin.Api.Endpoints.Pagination;
+using Odin.Api.Endpoints.ResponseSchemas;
 using Odin.Api.Models;
+using Odin.Api.Services.TimeSeriesStrategy;
 
 namespace Odin.Api.Services;
 
@@ -15,7 +17,7 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
     public async Task<IEnumerable<Temperature>> GetTemperaturesAsync(
         bool withDevice = false,
         int page = 1,
-        int limit = TemperatureConfig.DefaultPaginationLimit)
+        int limit = PaginationConstants.DefaultPaginationLimit)
     {
         var query = dbContext.Temperatures.AsQueryable();
 
@@ -36,14 +38,7 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
         return await dbContext.Temperatures.FindAsync(id);
     }
 
-    public async Task<IEnumerable<Temperature>> GetTemperaturesForDeviceAsync(int deviceId)
-    {
-        return await GetTemperaturesForDeviceAsync(deviceId, TemperatureConfig.DefaultLastDays);
-    }
-
-    public async Task<IEnumerable<Temperature>> GetTemperaturesForDeviceAsync(
-        int deviceId,
-        int days = TemperatureConfig.DefaultLastDays)
+    public async Task<IEnumerable<Temperature>> GetTemperaturesForDeviceAsync(int deviceId, int days = 30)
     {
         // Get last X days including today's values => benchmark previous days against today starting at midnight.
         var today = DateTimeOffset.UtcNow.Date;
@@ -52,6 +47,16 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
             .Where(t => t.DeviceId == deviceId && t.Timestamp >= start)
             .OrderBy(t => t.Timestamp)
             .ToListAsync();
+    }
+
+    public async Task<IEnumerable<TimeSeriesDataPoint>> GetTimeSeriesDataForDeviceAsync(
+        int deviceId,
+        TimeRange range,
+        TimeSpan timezoneOffset)
+    {
+        var factory = new TimeSeriesStrategyFactory(this);
+        var strategy = factory.CreateTimeSeriesStrategy(range);
+        return await strategy.GetTimeSeriesData(deviceId, timezoneOffset);
     }
 
     public async Task DeleteTemperatureAsync(Temperature temperature)

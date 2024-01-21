@@ -1,8 +1,7 @@
-namespace Odin.Api.Config;
+namespace Odin.Api.Endpoints.Pagination;
 
-public class TemperatureConfig
+public static class PaginationConstants
 {
-    public const int DefaultLastDays = 30;
     public const int DefaultPaginationLimit = 25;
     public const int MaxPaginationLimit = 100;
 }

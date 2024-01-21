@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using Odin.Api.Config;
 using Odin.Api.Endpoints.Pagination;
 using Odin.Api.Models;
 using Odin.Api.Services;
@@ -34,13 +33,13 @@ public static class TemperatureEndpoints
         ITemperatureService temperatureService,
         bool withDevice = false,
         int page = 1,
-        int limit = TemperatureConfig.DefaultPaginationLimit
+        int limit = PaginationConstants.DefaultPaginationLimit
     )
     {
         if (limit < 1)
-            limit = TemperatureConfig.DefaultPaginationLimit;
-        else if (limit > TemperatureConfig.MaxPaginationLimit)
-            limit = TemperatureConfig.MaxPaginationLimit;
+            limit = PaginationConstants.DefaultPaginationLimit;
+        else if (limit > PaginationConstants.MaxPaginationLimit)
+            limit = PaginationConstants.MaxPaginationLimit;
 
         var temperatures = page >= 1 ? await temperatureService.GetTemperaturesAsync(withDevice, page, limit) : [];
         var totalTemperatures = await temperatureService.CountTotalTemperaturesAsync();

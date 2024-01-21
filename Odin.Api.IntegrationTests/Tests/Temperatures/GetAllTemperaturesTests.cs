@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Odin.Api.Config;
 using Odin.Api.Endpoints.Pagination;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
@@ -61,7 +60,7 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var temperatures = responseJson!.Data;
 
         meta.Page.Should().Be(1);
-        meta.Limit.Should().Be(TemperatureConfig.DefaultPaginationLimit);
+        meta.Limit.Should().Be(PaginationConstants.DefaultPaginationLimit);
         meta.Count.Should().Be(2);
         meta.Total.Should().Be(2);
 
@@ -123,7 +122,7 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var temperatures = responseJson!.Data;
 
         meta.Page.Should().Be(1);
-        meta.Limit.Should().Be(TemperatureConfig.DefaultPaginationLimit);
+        meta.Limit.Should().Be(PaginationConstants.DefaultPaginationLimit);
         meta.Count.Should().Be(2);
         meta.Total.Should().Be(2);
 
