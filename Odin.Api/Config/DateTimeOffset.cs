@@ -19,4 +19,5 @@ public class DateTimeOffsetJsonConverter : JsonConverter<DateTimeOffset>
 public class DateTimeOffsetConstants
 {
     public const string YearMonthDayFormat = "yyyy-MM-dd";
+    public const string YearMonthFormat = "yyyy-MM";
 }

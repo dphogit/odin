@@ -9,6 +9,7 @@ public class TimeSeriesDataPoint
 
 public enum TimeRange
 {
-    Last30Days,
-    Last7Days,
+    Year,
+    Month,
+    Days,
 }

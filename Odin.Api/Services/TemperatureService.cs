@@ -56,7 +56,7 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
     {
         var factory = new TimeSeriesStrategyFactory(this);
         var strategy = factory.CreateTimeSeriesStrategy(range);
-        return await strategy.GetTimeSeriesData(deviceId, timezoneOffset);
+        return await strategy.GetTimeSeriesDataAsync(deviceId, timezoneOffset);
     }
 
     public async Task DeleteTemperatureAsync(Temperature temperature)

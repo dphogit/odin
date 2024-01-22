@@ -8,8 +8,9 @@ public class TimeSeriesStrategyFactory(ITemperatureService temperatureService)
     {
         return range switch
         {
-            TimeRange.Last30Days => new Last30DaysTimeSeriesStrategy(temperatureService),
-            TimeRange.Last7Days => new Last7DaysTimeSeriesStrategy(temperatureService),
+            TimeRange.Year => new YearTimeSeriesStrategy(temperatureService),
+            TimeRange.Month => new MonthTimeSeriesStrategy(temperatureService),
+            TimeRange.Days => new WeekTimeSeriesStrategy(temperatureService),
             _ => throw new ArgumentException($"Time range \"{range}\" is not supported")
         };
     }

@@ -36,13 +36,14 @@ public static class DeviceTemperaturesEndpoints
         return TypedResults.Ok(temperatureDtos);
     }
 
+    // TODO Testing
     public static async Task<Results<Ok<IEnumerable<TimeSeriesDataPoint>>, NotFound, BadRequest<string>>>
         GetTimeSeriesDataForDevice(
             ITemperatureService temperatureService,
             IDeviceService deviceService,
             HttpRequest httpRequest,
             int deviceId,
-            string timeRange = "last30days")
+            string timeRange = "month")
     {
         var device = await deviceService.GetDeviceByIdAsync(deviceId);
 
@@ -52,14 +53,17 @@ public static class DeviceTemperaturesEndpoints
         TimeRange range;
         switch (timeRange.ToLower().Trim())
         {
-            case "last30days":
-                range = TimeRange.Last30Days;
+            case "year":
+                range = TimeRange.Year;
                 break;
-            case "last7days":
-                range = TimeRange.Last7Days;
+            case "month":
+                range = TimeRange.Month;
+                break;
+            case "week":
+                range = TimeRange.Days;
                 break;
             default:
-                return TypedResults.BadRequest("Invalid time range. Valid values are \"last30Days\", \"last7Days\".");
+                return TypedResults.BadRequest("Invalid time range. Valid values are \"year\", \"month\", \"week\".");
         }
 
         // Get timezone offset which will bucket data points according to the user's timezone, defaults to UTC.
