@@ -1,27 +1,31 @@
-export const DAYS_SEARCH_PARAMS_KEY = 'days';
+export const TIMERANGE_SEARCHPARAMS_KEY = 'days';
 
 export const TimeRangeOptions = {
-    LAST_7_DAYS: 7,
-    LAST_30_DAYS: 30,
+    WEEK: 'week',
+    MONTH: 'month',
+    YEAR: 'year',
 } as const;
 
-export function isDaysWithinDropdownOptions(candidateDays: number) {
-    const validValues: number[] = Object.values(TimeRangeOptions);
-    return validValues.includes(candidateDays);
+export type TimeRangeOptionKey = keyof typeof TimeRangeOptions;
+export type TimeRangeOptionType = (typeof TimeRangeOptions)[TimeRangeOptionKey];
+
+export const DEFAULT_TIMERANGE_OPTION = TimeRangeOptions.MONTH;
+
+export function isTimeRangeWithinDropdownOptions(candidateTimeRange: string) {
+    const validOptions: string[] = Object.values(TimeRangeOptions);
+    return validOptions.includes(candidateTimeRange);
 }
 
-export function getDaysFromUrlSearchParams(urlSearchParams: URLSearchParams): number {
-    const daysQueryValue = urlSearchParams.get(DAYS_SEARCH_PARAMS_KEY);
+export function getTimeRangeFromUrlSearchParams(urlSearchParams: URLSearchParams): string {
+    const timeRangeQueryValue = urlSearchParams.get(TIMERANGE_SEARCHPARAMS_KEY);
 
-    if (!daysQueryValue) {
-        return TimeRangeOptions.LAST_30_DAYS;
+    if (!timeRangeQueryValue) {
+        return DEFAULT_TIMERANGE_OPTION;
     }
 
-    const days = parseInt(daysQueryValue);
-
-    if (isNaN(days) || !isDaysWithinDropdownOptions(days)) {
-        return TimeRangeOptions.LAST_30_DAYS;
+    if (!isTimeRangeWithinDropdownOptions(timeRangeQueryValue)) {
+        return DEFAULT_TIMERANGE_OPTION;
     }
 
-    return days;
+    return timeRangeQueryValue;
 }

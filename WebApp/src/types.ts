@@ -38,3 +38,13 @@ export function createPaginatedResponseSchema<T extends z.ZodTypeAny>(itemSchema
         _meta: collectionResponseMetaSchema,
     });
 }
+
+export const apiTimeSeriesDataPointDtoSchema = z.object({
+    timestamp: z.string(),
+    value: z.number().nullable(),
+});
+
+export const apiTimeSeriesDataPointResponseSchema = apiTimeSeriesDataPointDtoSchema.array();
+
+export type ApiTimeSeriesDataPointDto = z.infer<typeof apiTimeSeriesDataPointDtoSchema>;
+export type ApiTimeSeriesDataPointResponse = z.infer<typeof apiTimeSeriesDataPointResponseSchema>;

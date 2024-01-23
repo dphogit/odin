@@ -1,21 +1,11 @@
 import { Box, Grid, Sheet, Typography } from '@mui/joy';
 import { useNavigation } from 'react-router-dom';
 import { useGetDeviceDetailsQuery } from '../api';
-import { ApiTemperatureDto } from '../../temperatures';
-import { DAYS_SEARCH_PARAMS_KEY } from '../util';
+import { TIMERANGE_SEARCHPARAMS_KEY } from '../util';
 import DeviceEditableInfoCard from './DeviceEditableInfoCard';
 import DeviceOptionsMenu from './DeviceOptionsMenu';
-import DeviceTemperatureGraph, { DeviceTemperatureGraphDataPoint } from './DeviceTemperatureGraph';
+import DeviceTemperatureGraph from './DeviceTemperatureGraph';
 import TimeRangeDropdown from './TimeRangeDropdown';
-
-function transformToTemperatureGraphData(
-    data: ApiTemperatureDto[]
-): DeviceTemperatureGraphDataPoint[] {
-    return data.map((item) => ({
-        timestamp: new Date(item.timestamp),
-        degreesCelsius: item.degreesCelsius,
-    }));
-}
 
 /**
  * Determines if we are fetching temperatures for a new selected time range (not in cache)
@@ -23,16 +13,13 @@ function transformToTemperatureGraphData(
  */
 function useIsFetchingTemperatures() {
     const navigation = useNavigation();
-    return new URLSearchParams(navigation.location?.search).has(DAYS_SEARCH_PARAMS_KEY);
+    return new URLSearchParams(navigation.location?.search).has(TIMERANGE_SEARCHPARAMS_KEY);
 }
 
 export default function DeviceDetailsPage() {
     const { data: response } = useGetDeviceDetailsQuery();
 
-    const deviceTemperatureGraphData = transformToTemperatureGraphData(
-        response.device.temperatures ?? []
-    );
-
+    // Show loading when changing time range options from dropdown.
     const isFetchingTemperatures = useIsFetchingTemperatures();
 
     return (
@@ -64,13 +51,13 @@ export default function DeviceDetailsPage() {
                                     range.
                                 </Typography>
                             </Box>
-                            <TimeRangeDropdown defaultValue={response.days} />
+                            <TimeRangeDropdown defaultValue={response.timeRange} />
                         </Box>
                         <DeviceTemperatureGraph
-                            data={deviceTemperatureGraphData}
+                            data={response.device.temperatures}
                             containerHeight={600}
                             isLoading={isFetchingTemperatures}
-                            days={response.days}
+                            timeRange={response.timeRange}
                         />
                     </Sheet>
                 </Grid>
