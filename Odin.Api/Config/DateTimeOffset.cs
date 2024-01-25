@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Odin.Api.Converters;
+namespace Odin.Api.Config;
 
 public class DateTimeOffsetJsonConverter : JsonConverter<DateTimeOffset>
 {
@@ -14,4 +14,10 @@ public class DateTimeOffsetJsonConverter : JsonConverter<DateTimeOffset>
     {
         writer.WriteStringValue(value.ToString("o"));
     }
+}
+
+public class DateTimeOffsetConstants
+{
+    public const string YearMonthDayFormat = "yyyy-MM-dd";
+    public const string YearMonthFormat = "yyyy-MM";
 }

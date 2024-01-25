@@ -1,36 +1,38 @@
 import { Option, Select } from '@mui/joy';
 import { useSubmit } from 'react-router-dom';
-import { DAYS_SEARCH_PARAMS_KEY, TimeRangeOptions, isDaysWithinDropdownOptions } from '../util';
+import {
+    DEFAULT_TIMERANGE_OPTION,
+    TIMERANGE_SEARCHPARAMS_KEY,
+    TimeRangeOptionType,
+    TimeRangeOptions,
+    isTimeRangeWithinDropdownOptions,
+} from '../util';
 
 interface TimeRangeDropdownProps {
-    defaultValue?: number;
+    defaultValue?: TimeRangeOptionType;
 }
 
 export default function TimeRangeDropdown({
-    defaultValue = TimeRangeOptions.LAST_30_DAYS,
+    defaultValue = DEFAULT_TIMERANGE_OPTION,
 }: TimeRangeDropdownProps) {
     const submit = useSubmit();
 
     const handleChange = (_: React.SyntheticEvent | null, newValue: string | null) => {
         if (!newValue) return;
         const searchParams = new URLSearchParams();
-        searchParams.set(DAYS_SEARCH_PARAMS_KEY, newValue);
+        searchParams.set(TIMERANGE_SEARCHPARAMS_KEY, newValue);
         submit(searchParams, { replace: true });
     };
 
-    if (!isDaysWithinDropdownOptions(defaultValue)) {
-        defaultValue = TimeRangeOptions.LAST_30_DAYS;
+    if (!isTimeRangeWithinDropdownOptions(defaultValue)) {
+        defaultValue = DEFAULT_TIMERANGE_OPTION;
     }
 
     return (
-        <Select
-            size="sm"
-            defaultValue={defaultValue.toString()}
-            name="days"
-            onChange={handleChange}
-        >
-            <Option value={TimeRangeOptions.LAST_30_DAYS.toString()}>Last 30 Days</Option>
-            <Option value={TimeRangeOptions.LAST_7_DAYS.toString()}>Last 7 Days</Option>
+        <Select size="sm" defaultValue={defaultValue} name="timerange" onChange={handleChange}>
+            <Option value={TimeRangeOptions.WEEK}>Last 7 Days</Option>
+            <Option value={TimeRangeOptions.MONTH}>Last 30 Days</Option>
+            <Option value={TimeRangeOptions.YEAR}>Last Year</Option>
         </Select>
     );
 }

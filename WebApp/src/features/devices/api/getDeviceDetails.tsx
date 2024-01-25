@@ -2,58 +2,66 @@ import { QueryClient, useQuery } from '@tanstack/react-query';
 import axiosInstance from 'lib/axios';
 import { useLoaderData, useParams, useSearchParams } from 'react-router-dom';
 import { LoaderFnArgsTypedParams } from 'routes/util';
-import { LoaderReturnType } from 'types';
-import { z } from 'zod';
 import {
-    ApiDeviceDto,
-    ApiTemperatureDto,
-    apiDeviceDtoSchema,
-    apiTemperatureDtoSchema,
-} from './types';
-import { TimeRangeOptions, isDaysWithinDropdownOptions, getDaysFromUrlSearchParams } from '../util';
+    ApiTimeSeriesDataPointDto,
+    ApiTimeSeriesDataPointResponse,
+    LoaderReturnType,
+    apiTimeSeriesDataPointResponseSchema,
+} from 'types';
+import {
+    DEFAULT_TIMERANGE_OPTION,
+    TimeRangeOptionType,
+    getTimeRangeFromUrlSearchParams,
+    isTimeRangeWithinDropdownOptions,
+} from '../util';
+import { ApiDeviceDto, apiDeviceDtoSchema } from './types';
 
 async function getDeviceDetails(id: string): Promise<ApiDeviceDto> {
     const response = await axiosInstance.get(`devices/${id}`);
     return apiDeviceDtoSchema.parse(response.data);
 }
 
-async function getDeviceTemperatures(
+async function getDeviceTemperatureTimeSeriesData(
     id: string,
-    days: number = TimeRangeOptions.LAST_30_DAYS
-): Promise<ApiTemperatureDto[]> {
-    const endpoint = `/devices/${id}/temperatures?days=${days}`;
-    const response = await axiosInstance.get(endpoint);
-    return z.array(apiTemperatureDtoSchema).parse(response.data);
+    timeRange: string
+): Promise<ApiTimeSeriesDataPointResponse> {
+    const endpoint = `devices/${id}/temperatures/time-series?timeRange=${timeRange}`;
+    const response = await axiosInstance.get(endpoint, {
+        headers: {
+            'X-Timezone-Offset': -new Date().getTimezoneOffset(),
+        },
+    });
+    return apiTimeSeriesDataPointResponseSchema.parse(response.data);
 }
 
 interface GetDeviceDetailsResponse {
-    device: ApiDeviceDto & { temperatures: ApiTemperatureDto[] };
-    days: number;
+    device: ApiDeviceDto & { temperatures: ApiTimeSeriesDataPointDto[] };
+    timeRange: TimeRangeOptionType;
 }
 
-async function getDeviceDetailsWithTemperatures(
+async function getDeviceDetailsWithTemperatureTimeSeriesData(
     id: string,
-    days: number = TimeRangeOptions.LAST_30_DAYS
+    option: string
 ): Promise<GetDeviceDetailsResponse> {
     const [device, temperatures] = await Promise.all([
         getDeviceDetails(id),
-        getDeviceTemperatures(id, days),
+        getDeviceTemperatureTimeSeriesData(id, option),
     ]);
 
     // Make sure the days value is within our valid options, otherwise we set it to the default.
-    const daysResponseValue = isDaysWithinDropdownOptions(days)
-        ? days
-        : TimeRangeOptions.LAST_30_DAYS;
+    const timeRange = isTimeRangeWithinDropdownOptions(option)
+        ? (option as TimeRangeOptionType)
+        : DEFAULT_TIMERANGE_OPTION;
 
     return {
         device: { ...device, temperatures },
-        days: daysResponseValue,
+        timeRange,
     };
 }
 
-const getDeviceDetailsQuery = (id: string, days: number = TimeRangeOptions.LAST_30_DAYS) => ({
-    queryKey: ['devices', id, { days }],
-    queryFn: async () => getDeviceDetailsWithTemperatures(id, days),
+const getDeviceDetailsQuery = (id: string, timeRange: string) => ({
+    queryKey: ['devices', id, { timeRange }],
+    queryFn: async () => getDeviceDetailsWithTemperatureTimeSeriesData(id, timeRange),
 });
 
 type DeviceDetailsLoaderArgs = LoaderFnArgsTypedParams<'DEVICE_DETAILS'>;
@@ -65,10 +73,10 @@ export function useGetDeviceDetailsQuery() {
 
     if (!deviceId) throw new Error('No device id provided');
 
-    const days = getDaysFromUrlSearchParams(searchParams);
+    const timeRange = getTimeRangeFromUrlSearchParams(searchParams);
 
     return useQuery({
-        ...getDeviceDetailsQuery(deviceId, days),
+        ...getDeviceDetailsQuery(deviceId, timeRange),
         initialData,
     });
 }
@@ -78,9 +86,9 @@ export function getDeviceDetailsLoader(queryClient: QueryClient) {
         if (!params.deviceId) throw new Error('No device id provided');
 
         const urlSearchParams = new URL(request.url).searchParams;
-        const days = getDaysFromUrlSearchParams(urlSearchParams);
+        const timeRange = getTimeRangeFromUrlSearchParams(urlSearchParams);
 
-        return queryClient.ensureQueryData(getDeviceDetailsQuery(params.deviceId, days));
+        return queryClient.ensureQueryData(getDeviceDetailsQuery(params.deviceId, timeRange));
     };
 }
 

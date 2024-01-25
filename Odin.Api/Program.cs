@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Odin.Api.Converters;
+using Odin.Api.Config;
 using Odin.Api.Database;
 using Odin.Api.Endpoints;
 using Odin.Api.Services;

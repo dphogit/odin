@@ -1,12 +1,5 @@
 import { z } from 'zod';
 
-export const apiTemperatureDtoSchema = z.object({
-    id: z.number(),
-    deviceId: z.number(),
-    degreesCelsius: z.number(),
-    timestamp: z.string().datetime({ offset: true }),
-});
-
 export const apiDeviceDtoSchema = z.object({
     id: z.number(),
     name: z.string(),

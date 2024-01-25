@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Odin.Api.Config;
+using Odin.Api.Endpoints.ResponseSchemas;
 using Odin.Api.Models;
 using Odin.Api.Services;
 using Odin.Shared.ApiDtos.Temperatures;
@@ -13,26 +14,45 @@ public static class DeviceTemperaturesEndpoints
 {
     public static RouteGroupBuilder MapDeviceTemperatureEndpoints(this RouteGroupBuilder builder)
     {
-        builder.MapGet("/", GetAllDeviceTemperatures).WithName(nameof(GetAllDeviceTemperatures));
+        builder.MapGet("/time-series", GetTimeSeriesDataForDevice).WithName(nameof(GetTimeSeriesDataForDevice));
         builder.MapPost("/", AddTemperatureForDevice).WithName(nameof(AddTemperatureForDevice));
         return builder;
     }
 
-    public static async Task<Results<Ok<IEnumerable<ApiTemperatureDto>>, NotFound>> GetAllDeviceTemperatures(
-        ITemperatureService temperatureService,
-        IDeviceService deviceService,
-        int deviceId,
-        int days = TemperatureConfig.DefaultLastDays
-    )
+    public static async Task<Results<Ok<IEnumerable<TimeSeriesDataPoint>>, NotFound, BadRequest<string>>>
+        GetTimeSeriesDataForDevice(
+            ITemperatureService temperatureService,
+            IDeviceService deviceService,
+            HttpRequest httpRequest,
+            int deviceId,
+            string timeRange = "month")
     {
         var device = await deviceService.GetDeviceByIdAsync(deviceId);
 
         if (device is null)
             return TypedResults.NotFound();
 
-        var temperatures = await temperatureService.GetTemperaturesForDeviceAsync(deviceId, days);
-        var temperatureDtos = temperatures.Select(t => t.ToDto());
-        return TypedResults.Ok(temperatureDtos);
+        TimeRange range;
+        switch (timeRange.ToLower().Trim())
+        {
+            case "year":
+                range = TimeRange.Year;
+                break;
+            case "month":
+                range = TimeRange.Month;
+                break;
+            case "week":
+                range = TimeRange.Week;
+                break;
+            default:
+                return TypedResults.BadRequest("Invalid time range. Valid values are \"year\", \"month\", \"week\".");
+        }
+
+        // Timezone offset will bucket data points according to the user's timezone, defaults to UTC.
+        var timezoneOffset = httpRequest.GetTimezoneOffset();
+
+        var timeSeriesData = await temperatureService.GetTimeSeriesDataForDeviceAsync(deviceId, range, timezoneOffset);
+        return TypedResults.Ok(timeSeriesData);
     }
 
     public static async Task<Results<CreatedAtRoute<ApiTemperatureDto>, NotFound>> AddTemperatureForDevice(
