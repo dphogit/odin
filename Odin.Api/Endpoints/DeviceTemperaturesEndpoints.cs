@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Odin.Api.Config;
 using Odin.Api.Endpoints.ResponseSchemas;
 using Odin.Api.Models;
 using Odin.Api.Services;
@@ -13,30 +14,11 @@ public static class DeviceTemperaturesEndpoints
 {
     public static RouteGroupBuilder MapDeviceTemperatureEndpoints(this RouteGroupBuilder builder)
     {
-        builder.MapGet("/", GetAllDeviceTemperatures).WithName(nameof(GetAllDeviceTemperatures));
         builder.MapGet("/time-series", GetTimeSeriesDataForDevice).WithName(nameof(GetTimeSeriesDataForDevice));
         builder.MapPost("/", AddTemperatureForDevice).WithName(nameof(AddTemperatureForDevice));
         return builder;
     }
 
-    // TODO Needs to become paginated, create a new endpoint for obtaining time series data.
-    public static async Task<Results<Ok<IEnumerable<ApiTemperatureDto>>, NotFound>> GetAllDeviceTemperatures(
-        ITemperatureService temperatureService,
-        IDeviceService deviceService,
-        int deviceId,
-        int days = 30)
-    {
-        var device = await deviceService.GetDeviceByIdAsync(deviceId);
-
-        if (device is null)
-            return TypedResults.NotFound();
-
-        var temperatures = await temperatureService.GetTemperaturesForDeviceAsync(deviceId, days);
-        var temperatureDtos = temperatures.Select(t => t.ToDto());
-        return TypedResults.Ok(temperatureDtos);
-    }
-
-    // TODO Testing
     public static async Task<Results<Ok<IEnumerable<TimeSeriesDataPoint>>, NotFound, BadRequest<string>>>
         GetTimeSeriesDataForDevice(
             ITemperatureService temperatureService,
@@ -60,21 +42,14 @@ public static class DeviceTemperaturesEndpoints
                 range = TimeRange.Month;
                 break;
             case "week":
-                range = TimeRange.Days;
+                range = TimeRange.Week;
                 break;
             default:
                 return TypedResults.BadRequest("Invalid time range. Valid values are \"year\", \"month\", \"week\".");
         }
 
-        // Get timezone offset which will bucket data points according to the user's timezone, defaults to UTC.
-        var timezoneOffset = TimeSpan.FromMinutes(0);
-        if (httpRequest.Headers.TryGetValue("X-Timezone-Offset", out var values))
-        {
-            if (int.TryParse(values, out var offsetMinutes))
-            {
-                timezoneOffset = TimeSpan.FromMinutes(offsetMinutes);
-            }
-        }
+        // Timezone offset will bucket data points according to the user's timezone, defaults to UTC.
+        var timezoneOffset = httpRequest.GetTimezoneOffset();
 
         var timeSeriesData = await temperatureService.GetTimeSeriesDataForDeviceAsync(deviceId, range, timezoneOffset);
         return TypedResults.Ok(timeSeriesData);

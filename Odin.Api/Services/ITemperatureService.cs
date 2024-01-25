@@ -8,6 +8,8 @@ public interface ITemperatureService
 {
     public Task<int> CountTotalTemperaturesAsync();
 
+    public Task<int> CountTotalTemperaturesForDeviceAsync(int deviceId);
+
     public Task<IEnumerable<Temperature>> GetTemperaturesAsync(
         bool withDevice = false,
         int page = 1,

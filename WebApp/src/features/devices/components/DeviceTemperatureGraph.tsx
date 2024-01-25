@@ -88,7 +88,7 @@ export default function DeviceTemperatureGraph({
                             angle={-90}
                             height={100}
                             label={{
-                                value: 'time',
+                                value: 'Time Period',
                                 position: 'insideBottom',
                             }}
                         />

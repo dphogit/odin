@@ -11,5 +11,5 @@ public enum TimeRange
 {
     Year,
     Month,
-    Days,
+    Week,
 }

@@ -1,4 +1,4 @@
-export const TIMERANGE_SEARCHPARAMS_KEY = 'days';
+export const TIMERANGE_SEARCHPARAMS_KEY = 'timeRange';
 
 export const TimeRangeOptions = {
     WEEK: 'week',

@@ -14,6 +14,11 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
         return await dbContext.Temperatures.CountAsync();
     }
 
+    public async Task<int> CountTotalTemperaturesForDeviceAsync(int deviceId)
+    {
+        return await dbContext.Temperatures.CountAsync(t => t.DeviceId == deviceId);
+    }
+
     public async Task<IEnumerable<Temperature>> GetTemperaturesAsync(
         bool withDevice = false,
         int page = 1,
@@ -40,7 +45,6 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
 
     public async Task<IEnumerable<Temperature>> GetTemperaturesForDeviceAsync(int deviceId, int days = 30)
     {
-        // Get last X days including today's values => benchmark previous days against today starting at midnight.
         var today = DateTimeOffset.UtcNow.Date;
         var start = today.AddDays(-days);
         return await dbContext.Temperatures

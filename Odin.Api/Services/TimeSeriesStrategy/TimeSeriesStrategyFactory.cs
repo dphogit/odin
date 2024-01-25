@@ -10,7 +10,7 @@ public class TimeSeriesStrategyFactory(ITemperatureService temperatureService)
         {
             TimeRange.Year => new YearTimeSeriesStrategy(temperatureService),
             TimeRange.Month => new MonthTimeSeriesStrategy(temperatureService),
-            TimeRange.Days => new WeekTimeSeriesStrategy(temperatureService),
+            TimeRange.Week => new WeekTimeSeriesStrategy(temperatureService),
             _ => throw new ArgumentException($"Time range \"{range}\" is not supported")
         };
     }

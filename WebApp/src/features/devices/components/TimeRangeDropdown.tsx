@@ -29,7 +29,7 @@ export default function TimeRangeDropdown({
     }
 
     return (
-        <Select size="sm" defaultValue={defaultValue} name="days" onChange={handleChange}>
+        <Select size="sm" defaultValue={defaultValue} name="timerange" onChange={handleChange}>
             <Option value={TimeRangeOptions.WEEK}>Last 7 Days</Option>
             <Option value={TimeRangeOptions.MONTH}>Last 30 Days</Option>
             <Option value={TimeRangeOptions.YEAR}>Last Year</Option>
