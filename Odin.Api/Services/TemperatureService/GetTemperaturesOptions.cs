@@ -11,4 +11,8 @@ public class GetTemperatureOptions
     public int Limit { get; set; } = PaginationConstants.DefaultPaginationLimit;
 
     public TimestampSortOptions TimestampSort { get; set; } = TimestampSortOptions.Descending;
+
+    public double? MinValue { get; set; }
+
+    public double? MaxValue { get; set; }
 }

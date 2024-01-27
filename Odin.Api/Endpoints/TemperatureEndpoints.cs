@@ -22,6 +22,14 @@ public static class TemperatureEndpoints
     /// <param name="withDevice">
     ///     If true, the device associated with the temperature will be included with each temperature in the response.
     /// </param>
+    /// <param name="minValue">
+    ///    The inclusive minimum value of the temperature to retrieve in degrees Celsius.
+    ///    If not specified, no minimum value filter will be applied.
+    /// </param>
+    /// <param name="maxValue">
+    ///   The inclusive maximum value of the temperature to retrieve in degrees Celsius.
+    ///   If not specified, no maximum value filter will be applied.
+    ///   </param>
     /// <param name="page">
     ///     The current page to retrieve from for the collection request.
     /// </param>
@@ -35,6 +43,8 @@ public static class TemperatureEndpoints
     public static async Task<Ok<PaginatedResponseSchema<ApiTemperatureDto>>> GetAllTemperatures(
         HttpContext httpContext,
         ITemperatureService temperatureService,
+        double? minValue,
+        double? maxValue,
         bool withDevice = false,
         int page = 1,
         int limit = PaginationConstants.DefaultPaginationLimit,
@@ -58,11 +68,13 @@ public static class TemperatureEndpoints
             WithDevice = withDevice,
             Page = page,
             Limit = limit,
-            TimestampSort = timestampSort
+            TimestampSort = timestampSort,
+            MinValue = minValue,
+            MaxValue = maxValue,
         };
 
         var temperatures = page >= 1 ? await temperatureService.GetTemperaturesAsync(options) : [];
-        var totalTemperatures = await temperatureService.CountTotalTemperaturesAsync();
+        var totalTemperatures = page >= 1 ? await temperatureService.CountTotalTemperaturesAsync(options) : 0;
 
         var temperatureDtos = temperatures.Select(t => t.ToDto(t.Device?.ToDto()));
 

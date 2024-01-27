@@ -7,7 +7,7 @@ import DataCell from './DataCell';
 import TemperaturesTableRowMenu from './TemperaturesTableRowMenu';
 import TablePagination from './TablePagination';
 import { useSearchParams } from 'react-router-dom';
-import { DEFAULT_PAGE } from '../util';
+import { DEFAULT_PAGE, GetTemperaturesSearchKeys } from '../util';
 
 function formatTimestamp(timestamp: string) {
     return dayjs(timestamp).format('MMM DD, YYYY hh:mm:ss a');
@@ -25,7 +25,7 @@ interface TimestampHeaderCellProps {
 
 function TimestampHeaderCell({ onClick, arrowIconDirection }: TimestampHeaderCellProps) {
     return (
-        <th>
+        <th style={{ width: '300px' }}>
             <Link
                 underline="none"
                 color="primary"
@@ -63,20 +63,20 @@ export default function TemperaturesTable({
 
     const handleTimestampHeaderClick = () => {
         const newSortOrder = timestampSortOrder === 'asc' ? 'desc' : 'asc';
-        searchParams.set('sort', newSortOrder);
-        searchParams.set('page', DEFAULT_PAGE.toString());
+        searchParams.set(GetTemperaturesSearchKeys.TIMESTAMP_SORT, newSortOrder);
+        searchParams.set(GetTemperaturesSearchKeys.PAGE, DEFAULT_PAGE.toString());
         setSearchParams(searchParams, { replace: true });
     };
 
     const handleRowsPerPageChange = (_: React.SyntheticEvent | null, newValue: string) => {
-        searchParams.set('page', DEFAULT_PAGE.toString());
-        searchParams.set('limit', newValue);
+        searchParams.set(GetTemperaturesSearchKeys.PAGE, DEFAULT_PAGE.toString());
+        searchParams.set(GetTemperaturesSearchKeys.LIMIT, newValue);
         setSearchParams(searchParams, { replace: true });
     };
 
     const changePage = (newPage: number) => {
-        searchParams.set('page', newPage.toString());
-        searchParams.set('limit', rowsPerPage.toString());
+        searchParams.set(GetTemperaturesSearchKeys.PAGE, newPage.toString());
+        searchParams.set(GetTemperaturesSearchKeys.LIMIT, rowsPerPage.toString());
         setSearchParams(searchParams, { replace: true });
     };
 
@@ -102,7 +102,7 @@ export default function TemperaturesTable({
 
     return (
         <Sheet variant="outlined" sx={{ borderRadius: 'sm' }}>
-            <Table aria-label="Temperatures Table" noWrap hoverRow stickyHeader>
+            <Table aria-label="Temperatures Table" noWrap stickyHeader>
                 <thead>
                     <tr>
                         <TimestampHeaderCell

@@ -13,9 +13,10 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
         return await dbContext.Temperatures.CountAsync();
     }
 
-    public async Task<int> CountTotalTemperaturesForDeviceAsync(int deviceId)
+    public async Task<int> CountTotalTemperaturesAsync(GetTemperatureOptions options)
     {
-        return await dbContext.Temperatures.CountAsync(t => t.DeviceId == deviceId);
+        var query = BuildFilteredGetTemperaturesQuery(options);
+        return await query.CountAsync();
     }
 
     public async Task<IEnumerable<Temperature>> GetTemperaturesAsync(GetTemperatureOptions options)
@@ -25,7 +26,7 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
         var limit = options.Limit;
         var timestampSort = options.TimestampSort;
 
-        var query = dbContext.Temperatures.AsQueryable();
+        var query = BuildFilteredGetTemperaturesQuery(options);
 
         if (withDevice is true)
             query = query.Include(t => t.Device);
@@ -70,5 +71,21 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
     {
         dbContext.Temperatures.Remove(temperature);
         await dbContext.SaveChangesAsync();
+    }
+
+    private IQueryable<Temperature> BuildFilteredGetTemperaturesQuery(GetTemperatureOptions options)
+    {
+        var minValue = options.MinValue;
+        var maxValue = options.MaxValue;
+
+        var query = dbContext.Temperatures.AsQueryable();
+
+        if (minValue is not null)
+            query = query.Where(t => t.Value >= minValue);
+
+        if (maxValue is not null)
+            query = query.Where(t => t.Value <= maxValue);
+
+        return query;
     }
 }

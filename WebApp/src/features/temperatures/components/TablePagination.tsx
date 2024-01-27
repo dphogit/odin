@@ -49,7 +49,7 @@ export default function TablePagination({
         onRowsPerPageChange?.(e, newValue);
     };
 
-    const start = (page - 1) * rowsPerPage + 1;
+    const start = totalRecords === 0 ? 0 : (page - 1) * rowsPerPage + 1;
     const end = Math.min(page * rowsPerPage, totalRecords);
     const isFirstPage = start === 1;
     const isLastPage = end === totalRecords;
