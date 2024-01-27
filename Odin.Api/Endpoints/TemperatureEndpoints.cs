@@ -28,12 +28,17 @@ public static class TemperatureEndpoints
     /// <param name="limit">
     ///     The maximum number of records to retrieve per page.
     /// </param>
+    /// <param name="sort">
+    ///    The sort order of results using the timestamp of the temperature taken. Valid values are "asc" and "desc".
+    ///    Defaults to "desc" if not specified or an invalid value is provided.
+    /// </param>
     public static async Task<Ok<PaginatedResponseSchema<ApiTemperatureDto>>> GetAllTemperatures(
         HttpContext httpContext,
         ITemperatureService temperatureService,
         bool withDevice = false,
         int page = 1,
-        int limit = PaginationConstants.DefaultPaginationLimit
+        int limit = PaginationConstants.DefaultPaginationLimit,
+        string sort = "desc"
     )
     {
         if (limit < 1)
@@ -41,7 +46,22 @@ public static class TemperatureEndpoints
         else if (limit > PaginationConstants.MaxPaginationLimit)
             limit = PaginationConstants.MaxPaginationLimit;
 
-        var temperatures = page >= 1 ? await temperatureService.GetTemperaturesAsync(withDevice, page, limit) : [];
+        var timestampSort = sort.ToLower() switch
+        {
+            "asc" => TimestampSortOptions.Ascending,
+            "desc" => TimestampSortOptions.Descending,
+            _ => TimestampSortOptions.Descending
+        };
+
+        var options = new GetTemperatureOptions
+        {
+            WithDevice = withDevice,
+            Page = page,
+            Limit = limit,
+            TimestampSort = timestampSort
+        };
+
+        var temperatures = page >= 1 ? await temperatureService.GetTemperaturesAsync(options) : [];
         var totalTemperatures = await temperatureService.CountTotalTemperaturesAsync();
 
         var temperatureDtos = temperatures.Select(t => t.ToDto(t.Device?.ToDto()));

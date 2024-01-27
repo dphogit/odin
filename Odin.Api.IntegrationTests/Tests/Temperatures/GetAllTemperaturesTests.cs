@@ -306,4 +306,66 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
 
         temperatures.Should().BeEmpty();
     }
+
+    [Fact]
+    public async Task GetTemperatures_WithSortAscending_ReturnsOkAndTemperaturesInTimestampAsc()
+    {
+        // Arrange
+        var device1 = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
+        var device2 = new Device { Name = "Raspberry Pi Pico Internal Temperature Wifi" };
+        await factory.InsertAsync(device1, device2);
+
+        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
+        await factory.InsertAsync(degreesCelsiusUnit);
+
+        var temperature1 = new Temperature()
+        {
+            DeviceId = device1.Id,
+            Timestamp = DateTime.UtcNow.AddDays(-1),
+            Value = 24.5,
+            UnitId = degreesCelsiusUnit.Id
+        };
+        var temperature2 = new Temperature()
+        {
+            DeviceId = device2.Id,
+            Timestamp = DateTime.UtcNow,
+            Value = 26.9,
+            UnitId = degreesCelsiusUnit.Id
+        };
+        await factory.InsertAsync(temperature1, temperature2);
+
+        // Act
+        var response = await _httpClient.GetAsync("temperatures?sort=asc");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var responseJson = await response.Content.ReadFromJsonAsync<PaginatedResponseSchema<ApiTemperatureDto>>();
+        responseJson.Should().NotBeNull();
+
+        var meta = responseJson!.Meta;
+        var temperatures = responseJson!.Data;
+
+        meta.Page.Should().Be(1);
+        meta.Limit.Should().Be(PaginationConstants.DefaultPaginationLimit);
+        meta.Count.Should().Be(2);
+        meta.Total.Should().Be(2);
+
+        temperatures.Should().HaveCount(2).And.SatisfyRespectively(
+            earliestDto =>
+            {
+                earliestDto.Id.Should().Be(temperature1.Id);
+                earliestDto.DeviceId.Should().Be(device1.Id);
+                earliestDto.Timestamp.Should().Be(temperature1.Timestamp);
+                earliestDto.DegreesCelsius.Should().Be(temperature1.Value);
+            },
+            latestDto =>
+            {
+                latestDto.Id.Should().Be(temperature2.Id);
+                latestDto.DeviceId.Should().Be(device2.Id);
+                latestDto.Timestamp.Should().Be(temperature2.Timestamp);
+                latestDto.DegreesCelsius.Should().Be(temperature2.Value);
+            }
+        );
+    }
 }

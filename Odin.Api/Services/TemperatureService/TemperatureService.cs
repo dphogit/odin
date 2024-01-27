@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Odin.Api.Database;
-using Odin.Api.Endpoints.Pagination;
 using Odin.Api.Endpoints.ResponseSchemas;
 using Odin.Api.Models;
 using Odin.Api.Services.TimeSeriesStrategy;
@@ -19,20 +18,24 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
         return await dbContext.Temperatures.CountAsync(t => t.DeviceId == deviceId);
     }
 
-    public async Task<IEnumerable<Temperature>> GetTemperaturesAsync(
-        bool withDevice = false,
-        int page = 1,
-        int limit = PaginationConstants.DefaultPaginationLimit)
+    public async Task<IEnumerable<Temperature>> GetTemperaturesAsync(GetTemperatureOptions options)
     {
+        var withDevice = options.WithDevice;
+        var page = options.Page;
+        var limit = options.Limit;
+        var timestampSort = options.TimestampSort;
+
         var query = dbContext.Temperatures.AsQueryable();
 
         if (withDevice is true)
-        {
             query = query.Include(t => t.Device);
-        }
+
+        if (timestampSort == TimestampSortOptions.Ascending)
+            query = query.OrderBy(t => t.Timestamp);
+        else
+            query = query.OrderByDescending(t => t.Timestamp);
 
         return await query
-            .OrderByDescending(t => t.Timestamp)
             .Skip((page - 1) * limit)
             .Take(limit)
             .ToListAsync();
@@ -69,5 +72,3 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
         await dbContext.SaveChangesAsync();
     }
 }
-
-public class TemperatureServiceException(string message) : Exception(message) { }
