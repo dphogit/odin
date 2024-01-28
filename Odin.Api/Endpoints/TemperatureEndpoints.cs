@@ -70,13 +70,6 @@ public static class TemperatureEndpoints
             _ => TimestampSortOptions.Descending
         };
 
-        // var deviceIdsOption = deviceId.Length > 0 ? deviceId : null
-
-        // if (deviceId.Length > 0)
-        // {
-        //     deviceId = deviceId.Distinct().ToArray();
-        // }
-
         var options = new GetTemperatureOptions
         {
             WithDevice = withDevice,
