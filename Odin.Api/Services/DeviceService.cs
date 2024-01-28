@@ -4,7 +4,7 @@ using Odin.Api.Models;
 
 namespace Odin.Api.Services;
 
-public class DeviceService(AppDbContext dbContext, IUnitService unitService) : IDeviceService
+public class DeviceService(AppDbContext dbContext) : IDeviceService
 {
     public async Task<IEnumerable<Device>> GetDevicesAsync()
     {
@@ -37,14 +37,7 @@ public class DeviceService(AppDbContext dbContext, IUnitService unitService) : I
 
     public async Task AddMeasurementForDeviceAsync(Device device, Measurement measurement)
     {
-        Unit unit = measurement switch
-        {
-            Temperature _ => await unitService.GetUnitByNameAsync("Degrees Celsius") ??
-                                throw new ArgumentException("Degrees Celsius unit not found"),
-            _ => throw new ArgumentException($"Measurement type {measurement.GetType()} is not supported"),
-        };
-
-        measurement.Unit = unit;
+        measurement.Unit = Units.GetAssociatedUnit(measurement);
         device.Measurements.Add(measurement);
         await dbContext.SaveChangesAsync();
     }
