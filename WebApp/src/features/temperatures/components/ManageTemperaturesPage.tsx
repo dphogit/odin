@@ -1,11 +1,13 @@
 import { Box, Button, Grid, Typography } from '@mui/joy';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { useGetTemperaturesWithDeviceQuery } from '../api';
+import { useGetManageTemperaturesPageDataQuery } from '../api';
 import TemperaturesTable from './TemperaturesTable';
 import TemperatureFilterOptions from './TemperatureFilterOptions';
 
 export default function ManageTemperaturesPage() {
-    const { data: response } = useGetTemperaturesWithDeviceQuery();
+    const response = useGetManageTemperaturesPageDataQuery();
+
+    const { devices, temperatures } = response.data;
 
     return (
         <Box maxWidth="1920px" px="24px" mx="auto">
@@ -24,14 +26,14 @@ export default function ManageTemperaturesPage() {
             </Box>
             <Grid container my="36px" columnSpacing="36px">
                 <Grid xs={2}>
-                    <TemperatureFilterOptions />
+                    <TemperatureFilterOptions devices={devices} />
                 </Grid>
                 <Grid xs={10}>
                     <TemperaturesTable
-                        temperatures={response.data}
-                        totalRecords={response._meta.total}
-                        page={response._meta.page}
-                        rowsPerPage={response._meta.limit}
+                        temperatures={temperatures.data}
+                        totalRecords={temperatures._meta.total}
+                        page={temperatures._meta.page}
+                        rowsPerPage={temperatures._meta.limit}
                     />
                 </Grid>
             </Grid>

@@ -77,6 +77,7 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
     {
         var minValue = options.MinValue;
         var maxValue = options.MaxValue;
+        var deviceIds = options.DeviceIds;
 
         var query = dbContext.Temperatures.AsQueryable();
 
@@ -85,6 +86,9 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
 
         if (maxValue is not null)
             query = query.Where(t => t.Value <= maxValue);
+
+        if (deviceIds is not null)
+            query = query.Where(t => deviceIds.Contains(t.DeviceId));
 
         return query;
     }

@@ -15,6 +15,7 @@ export const GetTemperaturesSearchKeys = {
     TIMESTAMP_SORT: 'sort',
     MIN_TEMPERATURE: 'minValue',
     MAX_TEMPERATURE: 'maxValue',
+    DEVICE_ID: 'deviceId',
 } as const;
 
 export type SearchFilterQueries = {
@@ -23,6 +24,7 @@ export type SearchFilterQueries = {
     timestampSort: TimestampSort;
     minTemperature: number | null;
     maxTemperature: number | null;
+    deviceIds: string[];
 };
 
 /**
@@ -36,6 +38,7 @@ export function getSearchFilterQueries(urlSearchParams: URLSearchParams): Search
     const timestampSortQueryValue = urlSearchParams.get(GetTemperaturesSearchKeys.TIMESTAMP_SORT);
     const minTemperatureQueryValue = urlSearchParams.get(GetTemperaturesSearchKeys.MIN_TEMPERATURE);
     const maxTemperatureQueryValue = urlSearchParams.get(GetTemperaturesSearchKeys.MAX_TEMPERATURE);
+    const deviceIdQueryValues = urlSearchParams.getAll(GetTemperaturesSearchKeys.DEVICE_ID);
 
     const page = pageQueryValue ? parseInt(pageQueryValue) : DEFAULT_PAGE;
     const limit = limitQueryValue ? parseInt(limitQueryValue) : DEFAULT_PAGE_LIMIT;
@@ -44,7 +47,14 @@ export function getSearchFilterQueries(urlSearchParams: URLSearchParams): Search
     const minTemperature = minTemperatureQueryValue ? parseFloat(minTemperatureQueryValue) : null;
     const maxTemperature = maxTemperatureQueryValue ? parseFloat(maxTemperatureQueryValue) : null;
 
-    return { page, limit, timestampSort, minTemperature, maxTemperature };
+    return {
+        page,
+        limit,
+        timestampSort,
+        minTemperature,
+        maxTemperature,
+        deviceIds: deviceIdQueryValues,
+    };
 }
 
 /**

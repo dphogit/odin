@@ -8,7 +8,7 @@ import { apiDeviceDtoSchema } from './types';
 const getDevicesResponseSchema = z.array(apiDeviceDtoSchema);
 type GetDevicesResponse = z.infer<typeof getDevicesResponseSchema>;
 
-async function getDevices(): Promise<GetDevicesResponse> {
+export async function getDevices(): Promise<GetDevicesResponse> {
     const response = await axiosInstance.get('/devices');
     return getDevicesResponseSchema.parse(response.data);
 }

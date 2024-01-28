@@ -18,7 +18,7 @@ export default function TemperatureRangeFilter({
 
     return (
         <FormControl sx={{ alignItems: 'center' }}>
-            <FormLabel sx={{ fontSize: '1rem' }}>Temperature Range</FormLabel>
+            <FormLabel>Temperature Range</FormLabel>
             <Slider
                 aria-label="Temperature Range"
                 sx={{ pt: '12px', pb: '4px' }}

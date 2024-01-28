@@ -15,4 +15,6 @@ public class GetTemperatureOptions
     public double? MinValue { get; set; }
 
     public double? MaxValue { get; set; }
+
+    public int[]? DeviceIds { get; set; }
 }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Odin.Api.Endpoints.Pagination;
 using Odin.Api.Models;
 using Odin.Api.Services;
@@ -40,11 +41,17 @@ public static class TemperatureEndpoints
     ///    The sort order of results using the timestamp of the temperature taken. Valid values are "asc" and "desc".
     ///    Defaults to "desc" if not specified or an invalid value is provided.
     /// </param>
+    /// <param name="deviceIds">
+    ///    The device IDs of the devices to retrieve temperatures for. If not specified/empty, temperatures for
+    ///    all devices will be retrieved. Note that the query key is actually `deviceId` mapped to
+    ///    the `deviceIds` function parameter for clarity.
+    /// </param>
     public static async Task<Ok<PaginatedResponseSchema<ApiTemperatureDto>>> GetAllTemperatures(
         HttpContext httpContext,
         ITemperatureService temperatureService,
         double? minValue,
         double? maxValue,
+        [FromQuery(Name = "deviceId")] int[] deviceIds,
         bool withDevice = false,
         int page = 1,
         int limit = PaginationConstants.DefaultPaginationLimit,
@@ -63,6 +70,13 @@ public static class TemperatureEndpoints
             _ => TimestampSortOptions.Descending
         };
 
+        // var deviceIdsOption = deviceId.Length > 0 ? deviceId : null
+
+        // if (deviceId.Length > 0)
+        // {
+        //     deviceId = deviceId.Distinct().ToArray();
+        // }
+
         var options = new GetTemperatureOptions
         {
             WithDevice = withDevice,
@@ -71,6 +85,7 @@ public static class TemperatureEndpoints
             TimestampSort = timestampSort,
             MinValue = minValue,
             MaxValue = maxValue,
+            DeviceIds = deviceIds.Length > 0 ? deviceIds : null
         };
 
         var temperatures = page >= 1 ? await temperatureService.GetTemperaturesAsync(options) : [];

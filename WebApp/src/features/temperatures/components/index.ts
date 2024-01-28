@@ -1,4 +1,5 @@
 export { default as DataCell } from './DataCell';
+export { default as DeviceSelect } from './DeviceSelect';
 export { default as ManageTemperaturesPage } from './ManageTemperaturesPage';
 export { default as TemperaturesTable } from './TemperaturesTable';
 export { default as TablePagination } from './TablePagination';
