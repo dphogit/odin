@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Odin.Api.Database;
-using Odin.Api.Endpoints.Pagination;
 using Odin.Api.Endpoints.ResponseSchemas;
 using Odin.Api.Models;
 using Odin.Api.Services.TimeSeriesStrategy;
@@ -14,25 +13,30 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
         return await dbContext.Temperatures.CountAsync();
     }
 
-    public async Task<int> CountTotalTemperaturesForDeviceAsync(int deviceId)
+    public async Task<int> CountTotalTemperaturesAsync(GetTemperatureOptions options)
     {
-        return await dbContext.Temperatures.CountAsync(t => t.DeviceId == deviceId);
+        var query = BuildFilteredGetTemperaturesQuery(options);
+        return await query.CountAsync();
     }
 
-    public async Task<IEnumerable<Temperature>> GetTemperaturesAsync(
-        bool withDevice = false,
-        int page = 1,
-        int limit = PaginationConstants.DefaultPaginationLimit)
+    public async Task<IEnumerable<Temperature>> GetTemperaturesAsync(GetTemperatureOptions options)
     {
-        var query = dbContext.Temperatures.AsQueryable();
+        var withDevice = options.WithDevice;
+        var page = options.Page;
+        var limit = options.Limit;
+        var timestampSort = options.TimestampSort;
+
+        var query = BuildFilteredGetTemperaturesQuery(options);
 
         if (withDevice is true)
-        {
             query = query.Include(t => t.Device);
-        }
+
+        if (timestampSort == TimestampSortOptions.Ascending)
+            query = query.OrderBy(t => t.Timestamp);
+        else
+            query = query.OrderByDescending(t => t.Timestamp);
 
         return await query
-            .OrderByDescending(t => t.Timestamp)
             .Skip((page - 1) * limit)
             .Take(limit)
             .ToListAsync();
@@ -68,6 +72,24 @@ public class TemperatureService(AppDbContext dbContext) : ITemperatureService
         dbContext.Temperatures.Remove(temperature);
         await dbContext.SaveChangesAsync();
     }
-}
 
-public class TemperatureServiceException(string message) : Exception(message) { }
+    private IQueryable<Temperature> BuildFilteredGetTemperaturesQuery(GetTemperatureOptions options)
+    {
+        var minValue = options.MinValue;
+        var maxValue = options.MaxValue;
+        var deviceIds = options.DeviceIds;
+
+        var query = dbContext.Temperatures.AsQueryable();
+
+        if (minValue is not null)
+            query = query.Where(t => t.Value >= minValue);
+
+        if (maxValue is not null)
+            query = query.Where(t => t.Value <= maxValue);
+
+        if (deviceIds is not null)
+            query = query.Where(t => deviceIds.Contains(t.DeviceId));
+
+        return query;
+    }
+}

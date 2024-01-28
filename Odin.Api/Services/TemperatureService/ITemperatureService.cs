@@ -1,4 +1,3 @@
-using Odin.Api.Endpoints.Pagination;
 using Odin.Api.Endpoints.ResponseSchemas;
 using Odin.Api.Models;
 
@@ -8,12 +7,12 @@ public interface ITemperatureService
 {
     public Task<int> CountTotalTemperaturesAsync();
 
-    public Task<int> CountTotalTemperaturesForDeviceAsync(int deviceId);
+    /// <summary>
+    ///     Counts total number of temperatures matching the given options. Useful for providing pagination metadata.
+    /// </summary>
+    public Task<int> CountTotalTemperaturesAsync(GetTemperatureOptions options);
 
-    public Task<IEnumerable<Temperature>> GetTemperaturesAsync(
-        bool withDevice = false,
-        int page = 1,
-        int limit = PaginationConstants.DefaultPaginationLimit);
+    public Task<IEnumerable<Temperature>> GetTemperaturesAsync(GetTemperatureOptions options);
 
     public Task<Temperature?> GetTemperatureByIdAsync(int id);
 
