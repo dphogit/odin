@@ -34,7 +34,7 @@ public class GetTimeSeriesDataForDeviceTests(ApiFactory factory) : IAsyncLifetim
         var t1 = new Temperature()
         {
             DeviceId = device.Id,
-            Timestamp = DateTime.UtcNow.AddDays(-7),
+            Timestamp = todayDate.AddDays(-7),
             Value = 24.5,
             UnitId = degreesCelsiusUnit.Id
         };
@@ -42,7 +42,7 @@ public class GetTimeSeriesDataForDeviceTests(ApiFactory factory) : IAsyncLifetim
         var t2 = new Temperature()
         {
             DeviceId = device.Id,
-            Timestamp = DateTime.UtcNow.AddDays(-7),
+            Timestamp = todayDate.AddDays(-7),
             Value = 25.5,
             UnitId = degreesCelsiusUnit.Id
         };
@@ -50,7 +50,7 @@ public class GetTimeSeriesDataForDeviceTests(ApiFactory factory) : IAsyncLifetim
         var t3 = new Temperature()
         {
             DeviceId = device.Id,
-            Timestamp = DateTime.UtcNow.AddDays(-1),
+            Timestamp = todayDate.AddDays(-1),
             Value = 26.5,
             UnitId = degreesCelsiusUnit.Id
         };
