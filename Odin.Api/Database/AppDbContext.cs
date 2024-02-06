@@ -32,8 +32,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .WithMany()
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.SeedData();
-
         base.OnModelCreating(builder);
     }
 
@@ -51,15 +49,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             if (entry.State == EntityState.Added)
                 entity.CreatedAt = DateTimeOffset.UtcNow;
         }
-    }
-}
-
-internal static class ModelBuilderExtensions
-{
-    public static void SeedData(this ModelBuilder builder)
-    {
-        builder.Entity<Unit>().HasData(
-            Units.DegreesCelsius
-        );
     }
 }

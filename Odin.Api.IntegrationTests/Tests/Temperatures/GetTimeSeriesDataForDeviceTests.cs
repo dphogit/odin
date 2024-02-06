@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Odin.Api.Config;
+using Odin.Api.Database;
 using Odin.Api.Endpoints.ResponseSchemas;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
@@ -13,9 +14,14 @@ namespace Odin.Api.IntegrationTests.Tests.Temperatures;
 public class GetTimeSeriesDataForDeviceTests(ApiFactory factory) : IAsyncLifetime
 {
     private readonly HttpClient _httpClient = factory.HttpClient;
+    private readonly Action _seedDb = factory.SeedDb;
     private readonly Func<Task> _resetDatabase = factory.ResetDatabaseAsync;
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public Task InitializeAsync()
+    {
+        _seedDb();
+        return Task.CompletedTask;
+    }
 
     public async Task DisposeAsync() => await _resetDatabase();
 
@@ -26,9 +32,6 @@ public class GetTimeSeriesDataForDeviceTests(ApiFactory factory) : IAsyncLifetim
         var device = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
         await factory.InsertAsync(device);
 
-        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
-        await factory.InsertAsync(degreesCelsiusUnit);
-
         var todayDate = DateTime.UtcNow.Date;
 
         var t1 = new Temperature()
@@ -36,7 +39,7 @@ public class GetTimeSeriesDataForDeviceTests(ApiFactory factory) : IAsyncLifetim
             DeviceId = device.Id,
             Timestamp = todayDate.AddDays(-7),
             Value = 24.5,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
 
         var t2 = new Temperature()
@@ -44,7 +47,7 @@ public class GetTimeSeriesDataForDeviceTests(ApiFactory factory) : IAsyncLifetim
             DeviceId = device.Id,
             Timestamp = todayDate.AddDays(-7),
             Value = 25.5,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
 
         var t3 = new Temperature()
@@ -52,7 +55,7 @@ public class GetTimeSeriesDataForDeviceTests(ApiFactory factory) : IAsyncLifetim
             DeviceId = device.Id,
             Timestamp = todayDate.AddDays(-1),
             Value = 26.5,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
 
         await factory.InsertAsync(t1, t2, t3);

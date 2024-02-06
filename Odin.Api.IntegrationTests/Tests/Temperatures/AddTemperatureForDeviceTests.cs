@@ -12,9 +12,14 @@ namespace Odin.Api.IntegrationTests.Tests.Temperatures;
 public class AddTemperatureForDeviceTests(ApiFactory factory) : IAsyncLifetime
 {
     private readonly HttpClient _httpClient = factory.HttpClient;
+    private readonly Action _seedDb = factory.SeedDb;
     private readonly Func<Task> _resetDatabase = factory.ResetDatabaseAsync;
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public Task InitializeAsync()
+    {
+        _seedDb();
+        return Task.CompletedTask;
+    }
 
     public Task DisposeAsync() => _resetDatabase();
 
@@ -24,9 +29,6 @@ public class AddTemperatureForDeviceTests(ApiFactory factory) : IAsyncLifetime
         // Arrange
         var device = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
         await factory.InsertAsync(device);
-
-        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
-        await factory.InsertAsync(degreesCelsiusUnit);
 
         ApiAddTemperatureDto addTemperatureDto = new()
         {

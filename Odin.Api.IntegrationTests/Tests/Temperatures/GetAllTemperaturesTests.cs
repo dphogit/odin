@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
+using Odin.Api.Database;
 using Odin.Api.Endpoints.Pagination;
 using Odin.Api.IntegrationTests.Infrastructure;
 using Odin.Api.Models;
@@ -14,9 +15,14 @@ namespace Odin.Api.IntegrationTests.Tests.Temperatures;
 public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
 {
     private readonly HttpClient _httpClient = factory.HttpClient;
+    private readonly Action _seedDb = factory.SeedDb;
     private readonly Func<Task> _resetDatabase = factory.ResetDatabaseAsync;
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public Task InitializeAsync()
+    {
+        _seedDb();
+        return Task.CompletedTask;
+    }
 
     public async Task DisposeAsync() => await _resetDatabase();
 
@@ -28,22 +34,20 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var device2 = new Device { Name = "Raspberry Pi Pico Internal Temperature Wifi" };
         await factory.InsertAsync(device1, device2);
 
-        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
-        await factory.InsertAsync(degreesCelsiusUnit);
-
         var temperature1 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow.AddDays(-1),
             Value = 24.5,
-            UnitId = degreesCelsiusUnit.Id
+            // UnitId = unit.Id,
+            UnitId = Units.DegreesCelsius.Id
         };
         var temperature2 = new Temperature()
         {
             DeviceId = device2.Id,
             Timestamp = DateTime.UtcNow,
             Value = 26.9,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         await factory.InsertAsync(temperature1, temperature2);
 
@@ -90,22 +94,19 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var device2 = new Device { Name = "Raspberry Pi Pico Internal Temperature Wifi" };
         await factory.InsertAsync(device1, device2);
 
-        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
-        await factory.InsertAsync(degreesCelsiusUnit);
-
         var temperature1 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow.AddDays(-1),
             Value = 24.5,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         var temperature2 = new Temperature()
         {
             DeviceId = device2.Id,
             Timestamp = DateTime.UtcNow,
             Value = 26.9,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         await factory.InsertAsync(temperature1, temperature2);
 
@@ -158,22 +159,19 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var device2 = new Device { Name = "Raspberry Pi Pico Internal Temperature Wifi" };
         await factory.InsertAsync(device1, device2);
 
-        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
-        await factory.InsertAsync(degreesCelsiusUnit);
-
         var temperature1 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow.AddDays(-1),
             Value = 24.5,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         var temperature2 = new Temperature()
         {
             DeviceId = device2.Id,
             Timestamp = DateTime.UtcNow,
             Value = 26.9,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         await factory.InsertAsync(temperature1, temperature2);
 
@@ -213,22 +211,19 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var device2 = new Device { Name = "Raspberry Pi Pico Internal Temperature Wifi" };
         await factory.InsertAsync(device1, device2);
 
-        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
-        await factory.InsertAsync(degreesCelsiusUnit);
-
         var temperature1 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow.AddDays(-1),
             Value = 24.5,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         var temperature2 = new Temperature()
         {
             DeviceId = device2.Id,
             Timestamp = DateTime.UtcNow,
             Value = 26.9,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         await factory.InsertAsync(temperature1, temperature2);
 
@@ -268,22 +263,19 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var device2 = new Device { Name = "Raspberry Pi Pico Internal Temperature Wifi" };
         await factory.InsertAsync(device1, device2);
 
-        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
-        await factory.InsertAsync(degreesCelsiusUnit);
-
         var temperature1 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow.AddDays(-1),
             Value = 24.5,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         var temperature2 = new Temperature()
         {
             DeviceId = device2.Id,
             Timestamp = DateTime.UtcNow,
             Value = 26.9,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         await factory.InsertAsync(temperature1, temperature2);
 
@@ -315,22 +307,19 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var device2 = new Device { Name = "Raspberry Pi Pico Internal Temperature Wifi" };
         await factory.InsertAsync(device1, device2);
 
-        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
-        await factory.InsertAsync(degreesCelsiusUnit);
-
         var temperature1 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow.AddDays(-1),
             Value = 24.5,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         var temperature2 = new Temperature()
         {
             DeviceId = device2.Id,
             Timestamp = DateTime.UtcNow,
             Value = 26.9,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         await factory.InsertAsync(temperature1, temperature2);
 
@@ -376,29 +365,26 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var device1 = new Device { Name = "Arduino Uno R3 TMP36 Button Serial" };
         await factory.InsertAsync(device1);
 
-        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
-        await factory.InsertAsync(degreesCelsiusUnit);
-
         var temperature1 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow.AddDays(-2),
             Value = 24.5,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         var temperature2 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow.AddDays(-1),
             Value = 26.9,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         var temperature3 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow,
             Value = 27.1,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         await factory.InsertAsync(temperature1, temperature2, temperature3);
 
@@ -445,29 +431,26 @@ public class GetAllTemperaturesTests(ApiFactory factory) : IAsyncLifetime
         var device2 = new Device { Name = "Raspberry Pi Pico Internal Temperature Wifi" };
         await factory.InsertAsync(device1, device2);
 
-        var degreesCelsiusUnit = new Unit { Name = "Degrees Celsius", Symbol = "°C" };
-        await factory.InsertAsync(degreesCelsiusUnit);
-
         var temperature1 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow.AddDays(-2),
             Value = 24.5,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         var temperature2 = new Temperature()
         {
             DeviceId = device1.Id,
             Timestamp = DateTime.UtcNow.AddDays(-1),
             Value = 26.9,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
         var temperature3 = new Temperature()
         {
             DeviceId = device2.Id,
             Timestamp = DateTime.UtcNow,
             Value = 27.1,
-            UnitId = degreesCelsiusUnit.Id
+            UnitId = Units.DegreesCelsius.Id
         };
 
         await factory.InsertAsync(temperature1, temperature2, temperature3);

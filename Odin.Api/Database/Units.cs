@@ -4,7 +4,7 @@ namespace Odin.Api.Database;
 
 public static class Units
 {
-    public static Unit DegreesCelsius { get; } = new() { Id = 1, Name = "Degrees Celsius", Symbol = "°C" };
+    public static Unit DegreesCelsius { get; private set; } = new() { Id = 1, Name = "Degrees Celsius", Symbol = "°C" };
 
     /// <summary>
     ///     Returns the unit associated with the given measurement type.
@@ -20,4 +20,9 @@ public static class Units
             _ => throw new ArgumentException($"Measurement type {measurement.GetType()} is not supported"),
         };
     }
+
+    public static IEnumerable<Unit> AllUnits =>
+    [
+        DegreesCelsius
+    ];
 }

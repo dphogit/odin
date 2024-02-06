@@ -42,6 +42,26 @@ if (env.IsDevelopment())
 
 var app = builder.Build();
 
+// Seed the database with application data if it has not been seeded yet.
+// We use a guard because this way we can decouple application seeding from testing environments if needed.
+if (!env.IsEnvironment("Testing"))
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var unit = dbContext.Units.FirstOrDefault();
+    if (unit is null)
+    {
+        Console.WriteLine("Seed data not found, seeding database...");
+        var seeder = new DataSeeder(dbContext);
+        seeder.Seed();
+        Console.WriteLine("Database seeded successfully.");
+    }
+    else
+    {
+        Console.WriteLine("Database already seeded, skipping step.");
+    }
+}
+
 app.UseCors();
 
 app.UsePathBase("/api/v1");
