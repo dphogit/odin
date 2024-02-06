@@ -42,9 +42,9 @@ if (env.IsDevelopment())
 
 var app = builder.Build();
 
-// Seed the database with application data if it has not been seeded yet.
-// We use a guard because this way we can decouple application seeding from testing environments if needed.
-if (!env.IsEnvironment("Testing"))
+// Seed the database with application data if it has not been seeded yet. A testing env variable guard is used so
+// we can decouple application seeding from testing environments if needed.
+if (!env.IsTesting())
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();

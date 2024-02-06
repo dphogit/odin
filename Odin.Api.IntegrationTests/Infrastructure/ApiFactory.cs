@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Odin.Api.Config;
 using Odin.Api.Database;
 using Respawn;
 using Testcontainers.MsSql;
@@ -43,7 +44,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             dbContext.Database.EnsureCreated();
         });
 
-        builder.UseEnvironment("Testing");
+        builder.UseTestingEnvironment();
     }
 
     public async Task InitializeAsync()
