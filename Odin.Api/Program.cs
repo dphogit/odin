@@ -42,6 +42,26 @@ if (env.IsDevelopment())
 
 var app = builder.Build();
 
+// Seed the database with application data if it has not been seeded yet. A testing env variable guard is used so
+// we can decouple application seeding from testing environments if needed.
+if (!env.IsTesting())
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var unit = dbContext.Units.FirstOrDefault();
+    if (unit is null)
+    {
+        Console.WriteLine("Seed data not found, seeding database...");
+        var seeder = new DataSeeder(dbContext);
+        seeder.Seed();
+        Console.WriteLine("Database seeded successfully.");
+    }
+    else
+    {
+        Console.WriteLine("Database already seeded, skipping step.");
+    }
+}
+
 app.UseCors();
 
 app.UsePathBase("/api/v1");
@@ -49,7 +69,6 @@ app.UsePathBase("/api/v1");
 app.MapGet("/", () => "Hello World!");
 
 app.MapGroup("/devices").MapDeviceEndpoints();
-app.MapGroup("/units").MapUnitEndpoints();
 app.MapGroup("/temperatures").MapTemperatureEndpoints();
 
 app.Run();

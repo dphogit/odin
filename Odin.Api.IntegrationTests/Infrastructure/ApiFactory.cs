@@ -1,10 +1,10 @@
 using System.Data.Common;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Odin.Api.Config;
 using Odin.Api.Database;
 using Respawn;
 using Testcontainers.MsSql;
@@ -29,7 +29,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureTestServices(services =>
+        builder.ConfigureServices(services =>
         {
             var dbContextDescriptor = services.SingleOrDefault(
                 s => s.ServiceType == typeof(DbContextOptions<AppDbContext>));
@@ -39,18 +39,22 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
             services.AddDbContext<AppDbContext>(opts => opts.UseSqlServer(ConnectionString));
 
-            // Skips migrations and immediately setups the database (if not already) with latest schema.
             using var scope = services.BuildServiceProvider().CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             dbContext.Database.EnsureCreated();
         });
+
+        builder.UseTestingEnvironment();
     }
 
     public async Task InitializeAsync()
     {
         await _msSqlContainer.StartAsync();
+
         HttpClient = CreateClient();
+
         ScopeFactory = Services.GetRequiredService<IServiceScopeFactory>();
+
         await InitializeDbRespawner();
     }
 
@@ -64,11 +68,11 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await _respawner.ResetAsync(_dbConnection);
     }
 
-    public async Task ExecuteDbContextAsync(Action<AppDbContext> seedAction)
+    public async Task ExecuteDbContextAsync(Action<AppDbContext> action)
     {
         using var scope = ScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        seedAction(dbContext);
+        action(dbContext);
         await dbContext.SaveChangesAsync();
     }
 
@@ -82,6 +86,14 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         using var scope = ScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         return await dbContext.FindAsync<TEntity>(id);
+    }
+
+    public void SeedDb()
+    {
+        using var scope = ScopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var seeder = new DataSeeder(dbContext);
+        seeder.Seed();
     }
 
     private async Task InitializeDbRespawner()

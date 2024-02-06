@@ -69,14 +69,7 @@ Run the API:
 dotnet run --project Odin.Api
 ```
 
-Create a "Degrees Celsius" unit (the app is currently hardcoded to use this unit). Use the `POST /api/v1/units` endpoint with the following request body:
-
-```json
-{
-  "name": "Degrees Celsius",
-  "symbol": "°C"
-}
-```
+Upon startup, some seed data is added to the database. These are the units of measurement (e.g. Degrees Celsius) which are predefined and are read-only internally by the application layer and not exposed to the API consumers.
 
 ### Web App
 

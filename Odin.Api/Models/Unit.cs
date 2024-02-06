@@ -4,7 +4,7 @@ using Odin.Shared.ApiDtos.Units;
 namespace Odin.Api.Models;
 
 [Index(nameof(Name), IsUnique = true)]
-public class Unit : CreatedAtAndUpdatedAtEntity
+public class Unit
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
@@ -27,7 +27,5 @@ public static class UnitExtensions
         Id = unit.Id,
         Name = unit.Name,
         Symbol = unit.Symbol,
-        CreatedAt = unit.CreatedAt,
-        UpdatedAt = unit.UpdatedAt
     };
 }
