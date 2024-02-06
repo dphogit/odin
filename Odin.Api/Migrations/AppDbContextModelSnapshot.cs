@@ -113,14 +113,6 @@ namespace Odin.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Units");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Degrees Celsius",
-                            Symbol = "°C"
-                        });
                 });
 
             modelBuilder.Entity("Odin.Api.Models.Temperature", b =>
