@@ -53,6 +53,10 @@ That's the database setup! Some side notes:
 - You have System Administrator (SA) privileges on this local database, fine for local development but bad practice for production and rather you should disable the SA account and create a user with minimum privileges required.
 - The password you set in `MSQL_SA_PASSWORD` is the password for the SA user, which you can currently view through a simple `echo $MSSQL_SA_PASSWORD` command. Change this through the `ALTER LOGIN` command if you don't want the SA password to be accessible via your machine's environment variables.
 
+#### Data Recovery
+
+While it is ultimately up to you to manage your data and how you choose to back it up, there are some scripts in the [Data](/Data/) folder which can assist with backing up the database using a simple recovery model. I created these to help automate some of my own manual backup process.
+
 ### REST API
 
 For the API to connect to the database, dotnet [user-secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-8.0&tabs=windows) are used.
